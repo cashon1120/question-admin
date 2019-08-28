@@ -1,0 +1,161 @@
+@import '~antd/es/style/themes/default.less';
+
+/* 颜色设置 */
+@colorGreen: #97cd85;
+@colorOrigin: #ff6300;
+
+.color-green {
+  color: @colorGreen !important;
+}
+
+.color-origin {
+  color: @colorOrigin !important;
+}
+
+/* 布局常用 */
+.text-align-right {
+  text-align: right;
+}
+
+.text-align-left {
+  text-align: left;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+html,
+body,
+#root {
+  min-width: 1200px;
+  height: 100%;
+}
+
+.colorWeak {
+  filter: invert(80%);
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+@media (max-width: @screen-xs) {
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
+
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
+        white-space: pre;
+
+        > span {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+.ant-page-header-heading {
+  display: none !important;
+}
+
+.flex-container {
+  display: flex;
+
+  .flex-1 {
+    flex: 1;
+  }
+}
+
+.flex-item-algin-center {
+  align-items: center;
+}
+
+.padding-left {
+  padding-left: 24px;
+}
+
+.padding-top {
+  padding-top: 24px;
+}
+
+.padding-right {
+  padding-right: 24px;
+}
+
+.user-container {
+  background: #fff;
+  padding: 24px;
+  border: 1px solid #e8e8e8;
+}
+
+.realname {
+  h1 {
+    font-size: 34px;
+  }
+}
+
+.algin-center {
+  text-align: center;
+}
+
+.list-container {
+  padding: 24px 0;
+  line-height: 24px;
+  border-bottom: 1px solid #ebebeb;
+
+  h2 {
+    color: #000;
+    font-weight: normal;
+    font-size: 14px;
+    display: block;
+  }
+}
+
+.safe-bar {
+  width: 533px;
+  max-width: 100%;
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 4px;
+  padding: 5px 10px;
+  position: relative;
+  border-top: 8px solid #ccc;
+  text-align: center;
+  margin-left: 30px;
+
+  .left {
+    float: left;
+  }
+
+  .right {
+    float: right;
+  }
+
+  &::before {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    top: -8px;
+    border-top: 8px solid #75cfff;
+  }
+}
