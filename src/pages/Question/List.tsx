@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Tabs } from 'antd';
+import { Card } from 'antd';
 import { connect } from 'dva';
 import 'antd/dist/antd.css';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -7,33 +7,30 @@ import StandardTable from '../../components/StandardTable';
 import { ConnectProps, ConnectState } from '@/models/connect';
 import { DataList } from '../../models/userInfoAddress';
 
-const { TabPane } = Tabs;
-
 const columns = [
   {
-    title: '消息类型',
+    title: '用服务器实例名/参数',
     dataIndex: 'name',
     key: 'name',
   },
   {
-    title: '状态',
+    title: '备注名',
     dataIndex: 'area',
     key: 'area',
   },
   {
-    title: '接收时间',
+    title: '计费类型',
     dataIndex: 'address',
     key: 'address',
   },
   {
-    title: '标题',
+    title: '调血服务号数',
     dataIndex: 'phone',
     key: 'phone',
   },
   {
-    title: '摘要',
-    dataIndex: 'state',
-    key: 'state',
+    title: '操作',
+    render: () => <div>删除</div>,
   },
 ];
 
@@ -61,7 +58,7 @@ class Address extends Component<IProps, IState> {
   };
 
   componentDidMount() {
-    this.initData();
+    // this.initData()
   }
 
   handleTriggerModal = () => {
@@ -99,11 +96,6 @@ class Address extends Component<IProps, IState> {
     return (
       <PageHeaderWrapper>
         <Card>
-          <Tabs type="card">
-            <TabPane tab="个人普票" key="1"></TabPane>
-            <TabPane tab="企业普票" key="2"></TabPane>
-            <TabPane tab="增值税专票" key="3"></TabPane>
-          </Tabs>
           <StandardTable
             columns={columns}
             data={data || []}

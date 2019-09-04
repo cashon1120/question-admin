@@ -9,34 +9,28 @@ import { DataList } from '../../models/userInfoAddress';
 
 const columns = [
   {
-    title: '发票申请编号',
+    title: '用服务器实例名/参数',
     dataIndex: 'name',
     key: 'name',
   },
   {
-    title: '发票金额',
+    title: '备注名',
     dataIndex: 'area',
     key: 'area',
   },
   {
-    title: '申请时间',
+    title: '计费类型',
     dataIndex: 'address',
     key: 'address',
   },
   {
-    title: '发票抬头',
+    title: '调血服务号数',
     dataIndex: 'phone',
     key: 'phone',
   },
   {
-    title: '发票性质',
-    dataIndex: 'state',
-    key: 'state',
-  },
-  {
     title: '操作',
-    dataIndex: 'state',
-    key: 'state',
+    render: () => <div>删除</div>,
   },
 ];
 
@@ -64,7 +58,7 @@ class Address extends Component<IProps, IState> {
   };
 
   componentDidMount() {
-    this.initData();
+    // this.initData()
   }
 
   handleTriggerModal = () => {

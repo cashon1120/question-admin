@@ -90,10 +90,19 @@ export default {
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {
+      path: '/login',
+      component: '../layouts/UserLayout',
+      routes: [
+        {
+          name: 'login',
+          path: '/login',
+          component: './Login',
+        },
+      ],
+    },
+    {
       path: '/',
       component: '../layouts/BasicLayout',
-      Routes: ['src/pages/Authorized'],
-      authority: ['admin', 'user'],
       routes: [
         {
           path: '/',
@@ -107,64 +116,45 @@ export default {
           icon: 'user',
           routes: [
             {
-              path: '/userInfo/realName',
-              name: 'realName',
-              component: './UserInfo/RealName',
-            },
-            {
-              path: '/userInfo/auth',
-              name: 'auth',
-              component: './UserInfo/Auth',
-              hideInMenu: true,
-            },
-            {
-              path: '/userInfo/setting',
-              name: 'setting',
-              component: './UserInfo/Setting',
-            },
-            {
-              path: '/userInfo/address',
-              name: 'address',
-              component: './UserInfo/Address',
+              path: '/userInfo/List',
+              name: 'list',
+              component: './UserInfo/List',
             },
           ],
         },
         {
-          path: '/order',
-          name: 'order',
+          path: '/question',
+          name: 'question',
           icon: 'pay-circle',
+          authority: ['admin'],
           routes: [
             {
-              path: '/order/myOrder',
-              name: 'myOrder',
-              component: './Order/Order',
+              path: '/question/list',
+              name: 'list',
+              component: './Question/List',
             },
             {
-              path: '/order/myPay',
-              name: 'myPay',
-              component: './Order/Pay',
+              path: '/question/add',
+              name: 'add',
+              component: './Question/Add',
             },
           ],
         },
         {
-          path: '/invoice',
-          name: 'invoice',
-          icon: 'file-text',
+          path: '/account',
+          name: 'account',
+          icon: 'team',
+          authority: ['admin'],
           routes: [
             {
-              path: '/invoice/apply',
-              name: 'apply',
-              component: './Invoice/Apply',
+              path: '/account/list',
+              name: 'list',
+              component: './Account/List',
             },
             {
-              path: '/invoice/record',
-              name: 'record',
-              component: './Invoice/Record',
-            },
-            {
-              path: '/invoice/info',
-              name: 'info',
-              component: './Invoice/Info',
+              path: '/account/add',
+              name: 'add',
+              component: './Account/Add',
             },
           ],
         },
@@ -225,13 +215,12 @@ export default {
     basePath: '/',
   },
   chainWebpack: webpackPlugin,
-  /*
-  proxy: {
-    '/server/api/': {
-      target: 'https://preview.pro.ant.design/',
-      changeOrigin: true,
-      pathRewrite: { '^/server': '' },
-    },
-  },
-  */
+
+  // proxy: {
+  //   '/api/': {
+  //     target: 'https://preview.pro.ant.design/',
+  //     changeOrigin: true,
+  //     pathRewrite: { '^/api': '' },
+  //   },
+  // },
 } as IConfig;

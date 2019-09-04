@@ -15,7 +15,6 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import { FormComponentProps } from 'antd/es/form';
-import OssUpload from '../OssUpload';
 import cityArea from '../../assets/sys_area';
 import { legalStr } from '@/utils/utils';
 
@@ -319,17 +318,6 @@ class ModalFrom extends Component<FormProps, {}> {
                             placeholder={fItem.placeholder ? fItem.placeholder : '请输入'}
                             name={fItem.dataIndex}
                             className={fItem.childclassName}
-                          />
-                        );
-                      } else if (fItem.componentType === 'Upload') {
-                        componentTem = (
-                          <OssUpload
-                            disabled={fItem.disabled}
-                            form={form}
-                            name={fItem.dataIndex}
-                            maxImgLen={fItem.maxImgLen}
-                            dataSource={fItem.dataSource}
-                            {...fItem}
                           />
                         );
                       } else if (fItem.componentType === 'TreeSelect') {

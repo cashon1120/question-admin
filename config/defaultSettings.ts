@@ -1,12 +1,9 @@
-import { MenuTheme } from 'antd/es/menu';
-
 export type ContentWidth = 'Fluid' | 'Fixed';
 
 export interface DefaultSettings {
   /**
    * theme for nav menu
    */
-  navTheme: MenuTheme;
   /**
    * primary color of ant design
    */
@@ -54,7 +51,7 @@ export default {
   menu: {
     locale: true,
   },
-  title: '长城工业集团',
+  title: '中国长城工业集团',
   pwa: false,
   iconfontUrl: '',
 } as DefaultSettings;

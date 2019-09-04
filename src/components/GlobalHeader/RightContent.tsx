@@ -1,10 +1,8 @@
 import React from 'react';
 import { connect } from 'dva';
-import Link from 'umi/link';
 import { ConnectProps, ConnectState } from '@/models/connect';
 
 import Avatar from './AvatarDropdown';
-// import NoticeIconView from './NoticeIconView';
 import styles from './index.less';
 
 export type SiderTheme = 'light' | 'dark';
@@ -18,19 +16,6 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
 
   return (
     <div className={className}>
-      {/* <div>
-        <NoticeIconView/>
-      </div> */}
-      <div>
-        <Link to="/">控制中心</Link>
-      </div>
-      <div>
-        <Link to="/">免费试用</Link>
-      </div>
-      <div>
-        <Link to="/">续费扩容</Link>
-      </div>
-
       <div>
         <Avatar />
       </div>

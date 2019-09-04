@@ -3,11 +3,16 @@ import { parse, stringify } from 'qs';
 
 import { EffectsCommandMap } from 'dva';
 import { routerRedux } from 'dva/router';
+import { login } from '@/services/login';
 
 export function getPageQuery(): {
   [key: string]: string;
 } {
   return parse(window.location.href.split('?')[1]);
+}
+
+export interface LoginModelState {
+  currentUser?: boolean;
 }
 
 export type Effect = (
@@ -20,13 +25,14 @@ export interface ModelType {
   state: {};
   effects: {
     logout: Effect;
+    submitForm: Effect;
   };
   reducers: {
     changeLoginStatus: Reducer<{}>;
   };
 }
 
-const Model: ModelType = {
+const LoginModel: ModelType = {
   namespace: 'login',
 
   state: {
@@ -40,12 +46,18 @@ const Model: ModelType = {
       if (window.location.pathname !== '/user/login' && !redirect) {
         yield put(
           routerRedux.replace({
-            pathname: '/user/login',
+            pathname: '/login',
             search: stringify({
               redirect: window.location.href,
             }),
           }),
         );
+      }
+    },
+    *submitForm({ payload, callback }, { call }) {
+      const response = yield call(login, payload);
+      if (callback) {
+        callback(response);
       }
     },
   },
@@ -61,4 +73,4 @@ const Model: ModelType = {
   },
 };
 
-export default Model;
+export default LoginModel;

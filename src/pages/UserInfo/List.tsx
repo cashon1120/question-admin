@@ -1,37 +1,50 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Card } from 'antd';
 import { connect } from 'dva';
 import 'antd/dist/antd.css';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import StandardTable from '../../components/StandardTable';
+import StandardTable from '@/components/StandardTable';
 import { ConnectProps, ConnectState } from '@/models/connect';
-import { DataList } from '../../models/userInfoAddress';
+import { DataList } from '@/models/userInfoAddress';
 
 const columns = [
   {
-    title: '订单号',
-    dataIndex: 'id',
-    key: 'id',
+    title: '姓名',
+    dataIndex: 'name',
+    key: 'name',
   },
   {
-    title: '服务实例ID',
-    dataIndex: 'area',
+    title: '性别',
+    dataIndex: 'sex',
     key: 'area',
   },
   {
-    title: '交易时间',
-    dataIndex: 'address',
-    key: 'address',
+    title: '出生年月',
+    dataIndex: 'birth',
+    key: 'birth',
   },
   {
-    title: '支付去到',
+    title: '手机号',
     dataIndex: 'phone',
     key: 'phone',
   },
   {
-    title: '交易金额',
-    dataIndex: 'money',
-    key: 'money',
+    title: '毕业院校',
+    dataIndex: 'school',
+    key: 'school',
+  },
+  {
+    title: '审核状态',
+    dataIndex: 'status',
+    key: 'status',
+  },
+  {
+    title: '详细地址',
+    render: () => (
+      <Fragment>
+        <a>查看详情</a>
+      </Fragment>
+    ),
   },
 ];
 
@@ -42,6 +55,12 @@ interface IProps extends ConnectProps {
 interface IState {
   loading: boolean;
   modalVisible: boolean;
+  modalData: {
+    name: string;
+    phone: string;
+    area: string[];
+    address: string;
+  };
   pageInfo: {
     pageSize: number;
     pageNum: number;
@@ -52,6 +71,12 @@ class Address extends Component<IProps, IState> {
   state = {
     loading: false,
     modalVisible: false,
+    modalData: {
+      name: '',
+      phone: '',
+      area: [],
+      address: '',
+    },
     pageInfo: {
       pageSize: 10,
       pageNum: 1,
@@ -59,7 +84,7 @@ class Address extends Component<IProps, IState> {
   };
 
   componentDidMount() {
-    // this.initData()
+    this.initData();
   }
 
   handleTriggerModal = () => {
@@ -74,7 +99,9 @@ class Address extends Component<IProps, IState> {
   };
 
   handleSelectRows() {
-    this.handleTriggerModal();
+    this.setState({
+      modalVisible: true,
+    });
   }
 
   initData(params?: object) {
@@ -104,9 +131,6 @@ class Address extends Component<IProps, IState> {
             onChangeCombine={(params: object) => this.initData(params)}
             onSelectRow={this.handleSelectRows}
           />
-          <div className="text-align-center" style={{ paddingTop: 20 }}>
-            <a>购买产品</a>或<a>免费试用</a>
-          </div>
         </Card>
       </PageHeaderWrapper>
     );
