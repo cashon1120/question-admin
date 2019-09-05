@@ -82,11 +82,11 @@ class AddAccount extends Component<IProps, IState> {
 
   render() {
     const { confirmLoading } = this.state;
-    const { modalVisible, onCancel } = this.props;
+    const { modalVisible, onCancel, modalData:{id} } = this.props;
     return (
       <Fragment>
         <ModalFrom
-          title="新增地址"
+          title={id ? '修改账号' : '新增账号'}
           columns={this.modalFromColumns()}
           onOk={this.handleSubmitModal}
           visible={modalVisible}

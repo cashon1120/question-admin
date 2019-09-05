@@ -20,6 +20,7 @@ class Login extends Component<FormProps, {}> {
     const { dispatch, form } = this.props;
     const callback = (res: any) => {
       if (res.success) {
+        localStorage.setItem('userid', '1')
         setAuthority('admin');
         dispatch(routerRedux.push({ pathname: '/' }));
       } else {

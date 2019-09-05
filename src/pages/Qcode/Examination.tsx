@@ -1,8 +1,8 @@
 import React from 'react';
 import Index from './Index'
 
-const QcodeEnroll = () => <div>
+const QcodeExamination = () => <div>
   <Index type={2}/>
 </div>
 
-export default QcodeEnroll
+export default QcodeExamination

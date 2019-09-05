@@ -148,7 +148,7 @@ export default {
               path: '/question/add',
               name: 'add',
               component: './Question/Add',
-            },
+            }
           ],
         },
         {

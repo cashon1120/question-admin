@@ -1,114 +1,180 @@
-import React, { Component } from 'react';
-import { Card } from 'antd';
-import { connect } from 'dva';
+import React, {Component} from 'react';
+import {
+  Button,
+  Form,
+  Input,
+  Card,
+  Checkbox,
+  Row,
+  Col,
+  message
+} from 'antd';
+import {connect} from 'dva';
+import {FormComponentProps} from 'antd/es/form';
 import 'antd/dist/antd.css';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import StandardTable from '../../components/StandardTable';
-import { ConnectProps, ConnectState } from '@/models/connect';
-import { DataList } from '../../models/userInfoAddress';
+import {PageHeaderWrapper} from '@ant-design/pro-layout';
+import {Dispatch} from 'redux';
+import {formItemLayout, submitFormLayout} from '../../../public/config';
 
-const columns = [
-  {
-    title: '用服务器实例名/参数',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '备注名',
-    dataIndex: 'area',
-    key: 'area',
-  },
-  {
-    title: '计费类型',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: '调血服务号数',
-    dataIndex: 'phone',
-    key: 'phone',
-  },
-  {
-    title: '操作',
-    render: () => <div>删除</div>,
-  },
-];
+const FormItem = Form.Item;
+const {TextArea} = Input;
 
-interface IProps extends ConnectProps {
-  data?: DataList;
+interface FormProps extends FormComponentProps {
+  submitting : boolean;
+  dispatch : Dispatch;
 }
 
 interface IState {
-  loading: boolean;
-  modalVisible: boolean;
-  pageInfo: {
-    pageSize: number;
-    pageNum: number;
-  };
+  loading : boolean;
+  answers : any[];
 }
 
-class Address extends Component<IProps, IState> {
+class AddQuestion extends Component < FormProps,
+IState > {
   state = {
     loading: false,
-    modalVisible: false,
-    pageInfo: {
-      pageSize: 10,
-      pageNum: 1,
-    },
+    answers: [
+      {
+        label: 'A',
+        value: '',
+        right: false
+      }, {
+        label: 'B',
+        value: '',
+        right: false
+      }, {
+        label: 'C',
+        value: '',
+        right: false
+      }, {
+        label: 'D',
+        value: '',
+        right: false
+      }
+    ]
   };
 
   componentDidMount() {
-    // this.initData()
-  }
-
-  handleTriggerModal = () => {
-    const { modalVisible } = this.state;
-    this.setState({
-      modalVisible: !modalVisible,
-    });
-  };
-
-  handleSubmitModal = () => {
-    this.handleTriggerModal();
-  };
-
-  handleSelectRows() {
-    this.handleTriggerModal();
+    this.initData()
   }
 
   initData(params?: object) {
-    const { dispatch } = this.props;
-    const { pageInfo } = this.state;
+    const {dispatch} = this.props;
     if (dispatch) {
       dispatch({
-        type: 'userInfoAddress/fetch',
+        type: 'question/detail',
         payload: {
-          ...params,
-          ...pageInfo,
-        },
+          ...params
+        }
       });
     }
   }
 
+  handleSubmit = (e : React.FormEvent) => {
+    const {dispatch, form} = this.props;
+    const {answers} = this.state
+    const callback = (response: any) => {
+      
+    }
+    e.preventDefault();
+    form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        let rightAnswers = 0
+        answers.forEach((item : any) => {
+          if (item.right) {
+            rightAnswers += 1
+          }
+        })
+        if(rightAnswers === 0){
+          message.error('请至少选择一个正确答案!')
+          return
+        }
+        this.setState({
+          loading: true
+        })
+        dispatch({type: 'question/add', payload: values, callback});
+      }
+    });
+  };
+
+  handleChangeRight = (index : number) => {
+    const {answers} = this.state
+    const right = answers[index].right
+    answers[index].right = !right
+    this.setState({answers})
+  }
+
   render() {
-    const { data } = this.props;
-    const { loading } = this.state;
+    const {loading, answers} = this.state
+    const {form: {
+        getFieldDecorator
+      }} = this.props;
     return (
       <PageHeaderWrapper>
         <Card>
-          <StandardTable
-            columns={columns}
-            data={data || []}
-            loading={loading}
-            onChangeCombine={(params: object) => this.initData(params)}
-            onSelectRow={this.handleSelectRows}
-          />
+          <Form
+            {...formItemLayout}
+            onSubmit={this.handleSubmit}
+            style={{
+            marginTop: 20
+          }}>
+            <FormItem label="标题">
+              <Row gutter={24}>
+                <Col span={12}>
+                  {getFieldDecorator('title', {
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入标题'
+                      }
+                    ]
+                  })(<TextArea placeholder="请输入标题"/>)}
+                </Col>
+                <Col span={12}></Col>
+              </Row>
+
+            </FormItem>
+            {answers.map((item : any, index : number) => {
+              return (
+                <FormItem key={index} {...formItemLayout} label={item.label}>
+                  <Row gutter={24} >
+                    <Col span={12}>
+                      {getFieldDecorator(`${item.label}`, {
+                        initialValue: item.value,
+                        rules: [
+                          {
+                            required: true,
+                            message: `请输入答案${item.label}`
+                          }
+                        ]
+                      })(<TextArea placeholder={`请输入答案${item.label}`}/>)}
+                    </Col>
+                    <Col span={12}>
+                      <Checkbox
+                        checked={item.right}
+                        onChange={() => {
+                        this.handleChangeRight(index)
+                      }}>正确答案</Checkbox>
+                    </Col>
+                  </Row>
+                </FormItem>
+              )
+            })}
+
+            <FormItem
+              {...submitFormLayout}
+              style={{
+              marginTop: 32
+            }}>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                保存题目
+              </Button>
+            </FormItem>
+          </Form>
         </Card>
       </PageHeaderWrapper>
     );
   }
 }
 
-export default connect(({ userInfoAddress }: ConnectState) => ({ data: userInfoAddress.data }))(
-  Address,
-);
+export default Form.create < FormProps > ()(connect(() => ({}))(AddQuestion));

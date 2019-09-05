@@ -53,8 +53,8 @@ IState > {
       width: 150,
       render: (record : any) => (
         <div className="table-operate">
-          <a onClick={() => this.edit(record)}>修改</a>
-          <a onClick={() => this.del(record.id)}>删除</a>
+          <a onClick={() => this.handleEdit(record)}>修改</a>
+          <a onClick={() => this.handleDel(record.id)}>删除</a>
         </div>
       )
     }
@@ -64,8 +64,7 @@ IState > {
     this.initData();
   }
 
-  edit = (record: any) => {
-    console.log(record)
+  handleEdit = (record: any) => {
     this.setState({
       modalData:{
         ...record
@@ -101,7 +100,7 @@ IState > {
     }
   }
 
-  del = (id : string) => {
+  handleDel = (id : string) => {
     const {dispatch} = this.props
     const callback = (response : any) => {
       if (response.success) {

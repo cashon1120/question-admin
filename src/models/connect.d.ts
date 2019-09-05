@@ -10,8 +10,9 @@ import {UserInfoModelState} from './userInfo'
 import {ReportModelState} from './report'
 import {QcodeModelState} from './qcode'
 import {AccountModelState} from './account'
+import {QuestionModelState} from './account'
 
-export { GlobalModelState, SettingModelState, UserModelState, LoginModelState, UserInfoModelState,AccountModelState };
+export { GlobalModelState, SettingModelState, UserModelState, LoginModelState, UserInfoModelState,AccountModelState,QuestionModelState };
 
 export interface Loading {
   global: boolean;
@@ -37,7 +38,8 @@ export interface ConnectState {
   userInfo: UserInfoModelState
   report: ReportModelState
   qcode: QcodeModelState,
-  account: AccountModelState
+  account: AccountModelState,
+  question: QuestionModelState
 }
 
 export type Effect = (

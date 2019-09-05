@@ -12,6 +12,7 @@ export default {
   'menu.question': '题库管理',
   'menu.question.list': '题库列表',
   'menu.question.add': '添加题库',
+  'menu.question.addQuestion': '添加题库',
 
   'menu.account': '账号管理',
   'menu.account.list': '账号列表',
