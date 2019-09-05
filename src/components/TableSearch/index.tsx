@@ -143,7 +143,7 @@ class TableSearch extends PureComponent<FormProps, {}> {
         <div className={styles.searchTable}>
           {columns &&
             columns.map((item: any) => (
-              <div>
+              <div key={item.dataIndex}>
                 <FormItem label={item.title}>
                   {getFieldDecorator(item.dataIndex, {
                     initialValue: item.initialValue,
@@ -155,7 +155,7 @@ class TableSearch extends PureComponent<FormProps, {}> {
                           <Select
                             allowClear
                             placeholder="请选择"
-                            style={{ width: '100%' }}
+                            style={{ minWidth: 150 }}
                             onSelect={fItem.onSelect && fItem.onSelect()}
                           >
                             {fItem.dataSource &&

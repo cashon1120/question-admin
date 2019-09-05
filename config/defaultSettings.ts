@@ -51,7 +51,7 @@ export default {
   menu: {
     locale: true,
   },
-  title: '中国长城工业集团',
+  title: '电力招聘考试平台',
   pwa: false,
   iconfontUrl: '',
 } as DefaultSettings;

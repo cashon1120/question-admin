@@ -102,30 +102,41 @@ export default {
     },
     {
       path: '/',
+      Routes: ['src/pages/Authorized'],
       component: '../layouts/BasicLayout',
       routes: [
         {
           path: '/',
-          name: 'index',
-          icon: 'home',
-          component: './home/Home',
+          redirect: '/userInfo/list',
         },
         {
-          path: '/userInfo',
+          path: '/userInfo/list',
           name: 'userInfo',
-          icon: 'user',
+          icon: 'idcard',
+          hideChildrenInMenu: true,
           routes: [
             {
-              path: '/userInfo/List',
+              path: '/userInfo/list',
               name: 'list',
-              component: './UserInfo/List',
+              component: './UserInfo/List'
             },
-          ],
+            {
+              path: '/userInfo/detail/:id',
+              name: 'detail',
+              component: './UserInfo/Detail'
+            }
+          ]
+        },
+        {
+          path:'/report',
+          name: 'report',
+          icon: 'profile',
+          component: './Report/List'
         },
         {
           path: '/question',
           name: 'question',
-          icon: 'pay-circle',
+          icon: 'file-unknown',
           authority: ['admin'],
           routes: [
             {
@@ -141,22 +152,35 @@ export default {
           ],
         },
         {
+          path: '/qcode',
+          name: 'qcode',
+          icon: 'code',
+          // authority: ['admin'],
+          routes: [
+            {
+              path: '/qcode/enroll',
+              name: 'enroll',
+              component: './Qcode/Enroll',
+            },
+            {
+              path: '/qcode/Examination',
+              name: 'examination',
+              component: './Qcode/Examination',
+            },
+            {
+              path: '/qcode/:type',
+              name: 'qcodeType',
+              component: './Qcode/Index',
+              hideInMenu: true
+            },
+          ],
+        },
+        {
           path: '/account',
           name: 'account',
           icon: 'team',
           authority: ['admin'],
-          routes: [
-            {
-              path: '/account/list',
-              name: 'list',
-              component: './Account/List',
-            },
-            {
-              path: '/account/add',
-              name: 'add',
-              component: './Account/Add',
-            },
-          ],
+          component: './Account/Index'
         },
         {
           component: './404',

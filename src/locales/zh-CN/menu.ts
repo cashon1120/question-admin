@@ -2,8 +2,12 @@ export default {
   'menu.index': '首页',
   'menu.more-blocks': '更多区块',
 
-  'menu.userInfo': '资料审核',
+  'menu.userInfo': '基础信息查询',
   'menu.userInfo.list': '资料列表',
+  'menu.userInfo.detail': '资料详情',
+
+  'menu.report': '考试成绩查询',
+  'menu.report.list': '考试成绩查询',
 
   'menu.question': '题库管理',
   'menu.question.list': '题库列表',
@@ -12,6 +16,11 @@ export default {
   'menu.account': '账号管理',
   'menu.account.list': '账号列表',
   'menu.account.add': '添加账号',
+
+  'menu.qcode': '二难码生成',
+  'menu.qcode.enroll': '报名二维码',
+  'menu.qcode.examination': '考试二维码',
+  'menu.qcode.qcodeType': '生成二维码',
 
   'menu.home': '首页',
   'menu.login': '登录',

@@ -28,7 +28,7 @@ interface IState {
   };
 }
 
-class UserInfoList extends Component < IProps,
+class ReportList extends Component < IProps,
 IState > {
   state = {
     loading: false,
@@ -52,13 +52,9 @@ IState > {
       dataIndex: 'name',
       key: 'name'
     }, {
-      title: '性别',
+      title: '身份证号',
       dataIndex: 'sex',
       key: 'area'
-    }, {
-      title: '学历',
-      dataIndex: 'birth',
-      key: 'birth'
     }, {
       title: '电话',
       dataIndex: 'phone',
@@ -75,15 +71,20 @@ IState > {
       title: '英语技能',
       dataIndex: 'school3',
       key: 'school3'
-    }, {
-      title: '审核状态',
-      dataIndex: 'status',
-      key: 'status'
+    },{
+      title: '政治面貌',
+      dataIndex: 'school4',
+      key: 'school4'
+    }, 
+    {
+      title: '成绩',
+      dataIndex: 'score',
+      key: 'score'
     }, {
       title: '操作',
       render: (record: any) => (
         <div className="table-operate">
-          <Link to={`/userInfo/detail/${record.id}`}>详情</Link>
+          <Link to={`/report/detail/${record.id}`}>详情</Link>
           <a onClick={() => this.hadleCheckOut(record.id)}>初审通过</a>
           <a>取消审核</a>
         </div>
@@ -129,7 +130,7 @@ IState > {
 
     if (dispatch) {
       dispatch({
-        type: 'userInfo/fetch',
+        type: 'report/fetch',
         payload: {
           ...searchParams,
           ...pageInfo,
@@ -147,7 +148,7 @@ IState > {
         dataIndex: 'name',
         componentType: 'Input'
       }, {
-        title: '审核状态',
+        title: '学历',
         dataIndex: 'status',
         componentType: 'Select',
         dataSource: [
@@ -209,7 +210,7 @@ IState > {
       return
     }
     if (dispatch) {
-      dispatch({type: 'userInfo/exportFile', payload: {}});
+      dispatch({type: 'report/exportFile', payload: {}});
     }
   }
 
@@ -226,7 +227,7 @@ IState > {
       onOk: () => {
         if(dispatch){
         dispatch({
-          type: 'userInfo/checkOut',
+          type: 'report/checkOut',
           payload: {
             id,
           },
@@ -269,4 +270,4 @@ IState > {
   }
 }
 
-export default connect(({userInfo, loading} : ConnectState) => ({data: userInfo.data, loading: loading.models.userInfo}))(UserInfoList);
+export default connect(({report, loading} : ConnectState) => ({data: report.data, loading: loading.models.report}))(ReportList);

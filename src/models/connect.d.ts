@@ -6,8 +6,12 @@ import { GlobalModelState } from './global';
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { UserModelState } from './user';
 import { LoginModelState } from './login';
+import {UserInfoModelState} from './userInfo'
+import {ReportModelState} from './report'
+import {QcodeModelState} from './qcode'
+import {AccountModelState} from './account'
 
-export { GlobalModelState, SettingModelState, UserModelState, LoginModelState };
+export { GlobalModelState, SettingModelState, UserModelState, LoginModelState, UserInfoModelState,AccountModelState };
 
 export interface Loading {
   global: boolean;
@@ -18,6 +22,9 @@ export interface Loading {
     setting?: boolean;
     user?: boolean;
     login?: boolean;
+    userInfo?: boolean
+    report?: boolean
+    qcode? :boolean
   };
 }
 
@@ -27,6 +34,10 @@ export interface ConnectState {
   settings: SettingModelState;
   user: UserModelState;
   login: LoginModelState;
+  userInfo: UserInfoModelState
+  report: ReportModelState
+  qcode: QcodeModelState,
+  account: AccountModelState
 }
 
 export type Effect = (

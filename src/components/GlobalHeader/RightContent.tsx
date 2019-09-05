@@ -24,6 +24,5 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
 };
 
 export default connect(({ settings }: ConnectState) => ({
-  theme: settings.navTheme,
   layout: settings.layout,
 }))(GlobalHeaderRight);
