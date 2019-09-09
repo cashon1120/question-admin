@@ -57,12 +57,12 @@ IState > {
       key: 'status'
     }, {
       title: '操作',
-      width: 150,
+      width: 200,
       render: (record: any) => (
         <div className="table-operate">
           <Link to={`/question/add/${record.id}`}>详情</Link>
-          <a onClick={() => this.hadleCheckOut(record.id)}>初审通过</a>
-          <a>取消审核</a>
+          <a onClick={() => this.hadleCheckOut(record.id)}>修改</a>
+          <a onClick={() => this.hadleCheckOut(record.id)}>删除</a>
         </div>
       )
     }
