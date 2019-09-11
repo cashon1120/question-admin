@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 import {  Effect } from 'dva';
-import { fetch, exportFile, checkOut } from '@/services/report';
+import { fetch, detail, checkOut } from '@/services/report';
 
 export interface ReportModelState {
   data: any;
@@ -11,7 +11,7 @@ export interface ModelType {
   state: ReportModelState;
   effects: {
     fetch: Effect;
-    exportFile: Effect;
+    detail: Effect;
     checkOut:Effect;
   };
   reducers: {
@@ -36,8 +36,8 @@ const LoginModel: ModelType = {
         });
       }
     },
-    *exportFile({ payload, callback }, { call }) {
-      const response = yield call(exportFile, payload);
+    *detail({ payload, callback }, { call }) {
+      const response = yield call(detail, payload);
       if (callback) {
         callback(response);
       }

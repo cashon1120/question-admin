@@ -14,6 +14,7 @@ export default {
 
   'menu.report': '考试成绩查询',
   'menu.report.list': '考试成绩查询',
+  'menu.reportDetail': '成绩详情',
 
   'menu.question': '题库管理',
   'menu.question.list': '题库列表',
@@ -22,6 +23,8 @@ export default {
   'menu.question.detail': '题目详情',
 
   'menu.account': '系统设置',
+  'menu.account.setting': '答题时间',
+  'menu.account.getSetting': '二维码有效时间',
   'menu.account.list': '账号列表',
   'menu.account.add': '添加账号',
 

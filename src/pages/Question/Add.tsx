@@ -129,7 +129,6 @@ IState > {
       })
       if (res.success) {
         const {type, is_multiple_selection, topic, questions} = res.data.question
-        const {option} = res.data
         if (is_multiple_selection === 1) {}
         this.setState({type, isMultipleSelection: is_multiple_selection, topic, questions})
       }

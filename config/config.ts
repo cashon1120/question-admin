@@ -141,6 +141,12 @@ export default {
           component: './Report/List'
         },
         {
+          path: '/report/detail/:id',
+          name: 'reportDetail',
+          component: './Report/Detail',
+          hideInMenu: true,
+        },
+        {
           path:'/company',
           name: 'company',
           icon: 'gold',
@@ -205,7 +211,18 @@ export default {
           name: 'account',
           icon: 'team',
           // authority: ['admin'],
-          component: './Account/Index'
+          routes: [
+            {
+              path: '/account/setting',
+              name: 'setting',
+              component: './Account/Setting',
+            },
+            {
+              path: '/account/getSetting',
+              name: 'getSetting',
+              component: './Account/GetSetting',
+            },
+          ]
         },
         {
           path: '/empty',

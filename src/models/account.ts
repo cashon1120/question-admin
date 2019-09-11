@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 import {  Effect } from 'dva';
-import { fetch, add, del } from '@/services/account';
+import { fetch, setTime, del, getSetting } from '@/services/account';
 
 export interface AccountModelState {
   data: any;
@@ -11,8 +11,9 @@ export interface ModelType {
   state: AccountModelState;
   effects: {
     fetch: Effect;
-    add: Effect;
+    setTime: Effect;
     del:Effect;
+    getSetting: Effect;
   };
   reducers: {
     saveData: Reducer<{}>;
@@ -36,13 +37,21 @@ const LoginModel: ModelType = {
         });
       }
     },
-    *add({ payload, callback }, { call }) {
-      const response = yield call(add, payload);
+
+    *setTime({ payload, callback }, { call }) {
+      const response = yield call(setTime, payload);
       if (callback) {
         callback(response);
       }
     },
 
+    *getSetting({ payload, callback }, { call }) {
+      const response = yield call(getSetting, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    
     *del({ payload, callback }, { call }) {
       const response = yield call(del, payload);
       if (callback) {

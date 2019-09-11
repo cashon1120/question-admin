@@ -1,30 +1,33 @@
 import request from '@/utils/request';
-// import { stringify } from 'qs';
+import { API_URL } from '../../public/config'
 
-export async function del(params: object): Promise<any> {
-  return request('/api/account_del', {
+export async function getSetting(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/getSettingTime', {
     method: 'POST',
+    requestType: 'form',
     data: params,
   });
 }
 
-export async function add(params: object): Promise<any> {
-  return request('/api/account_add', {
+export async function setTime(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/settingAnswerTime', {
     method: 'POST',
     data: params,
   });
 }
 
 export async function fetch(params: object): Promise<{}> {
-  return request('/api/account_fetch', {
+  return request(API_URL + '/admin/sys/getCandidateList', {
     method: 'POST',
+    requestType: 'form',
     data: params,
   });
 }
 
 export async function detail(params: object): Promise<{}> {
-  return request('/api/userInfo', {
+  return request(API_URL + '/admin/sys/getCandidateById', {
     method: 'POST',
+    requestType: 'form',
     data: params,
   });
 }

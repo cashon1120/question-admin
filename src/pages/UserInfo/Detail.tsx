@@ -80,43 +80,6 @@ IState > {
     }
   }
 
-  hadleCheckOut = (id : string, type : number) => {
-    const {dispatch} = this.props
-    const callback = (res : any) => {
-      if (res.success) {
-        message.success('操作成功')
-      } else {
-        message.error(res.data)
-      }
-      this.setState({
-        spinLoading: false
-      })
-    }
-    let info = '审核通过后，考生即可扫描二维码考试，是否通过审核'
-    if (type === 2) {
-      info = '确定要拒绝通过吗?'
-    }
-    confirm({
-      title: '审核信息',
-      content: info,
-      onOk: () => {
-        if (dispatch) {
-          this.setState({
-            spinLoading: true
-          })
-          dispatch({
-            type: 'userInfo/checkOut',
-            payload: {
-              deliveryId: id,
-              state: type
-            },
-            callback
-          });
-        }
-      }
-    });
-  }
-
   render() {
     const {userInfo, id, spinLoading} = this.state
     const englishLevel = setEnglishLevel(userInfo.english_level)
@@ -151,8 +114,6 @@ IState > {
         </Descriptions>
         <div className="foot-btn">
           <Button onClick={() => history.back()}>返回</Button>
-          <Button type="primary" onClick={() => this.hadleCheckOut(id, 3)}>通过审核</Button>
-          <Button type="primary" onClick={() => this.hadleCheckOut(id, 3)}>不通过</Button>
         </div>
         <div className={spinLoading
           ? 'spin'

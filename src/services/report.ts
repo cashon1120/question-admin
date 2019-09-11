@@ -9,12 +9,6 @@ export async function checkOut(params: object): Promise<any> {
   });
 }
 
-export async function exportFile(params: object): Promise<any> {
-  return request('/api/exportFile', {
-    method: 'POST',
-    data: params,
-  });
-}
 
 export async function fetch(params: object): Promise<{}> {
   return request(API_URL + '/admin/sys/getExamList', {
@@ -25,7 +19,7 @@ export async function fetch(params: object): Promise<{}> {
 }
 
 export async function detail(params: object): Promise<{}> {
-  return request(API_URL + '/admin/sys/getCandidateById', {
+  return request(API_URL + '/admin/sys/getExamDetailById', {
     method: 'POST',
     requestType: 'form',
     data: params,
