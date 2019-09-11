@@ -3,11 +3,11 @@ import {Card, Button, message, Modal} from 'antd';
 import {connect} from 'dva';
 import 'antd/dist/antd.css';
 import Link from 'umi/link';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
-import moment from 'moment';
+import { setEnglishLevel } from '../../utils/utils'
+import {EDUCATION_ARR} from '../../../public/config'
 const { confirm } = Modal;
 
 interface IProps extends ConnectProps {
@@ -24,7 +24,7 @@ interface IState {
   };
   pageInfo : {
     pageSize: number;
-    pageNum: number;
+    pageNumber: number;
   };
 }
 
@@ -42,7 +42,7 @@ IState > {
     },
     pageInfo: {
       pageSize: 10,
-      pageNum: 1
+      pageNumber: 1
     }
   };
 
@@ -54,27 +54,29 @@ IState > {
     }, {
       title: '性别',
       dataIndex: 'sex',
-      key: 'area'
+      key: 'sex',
+      render: (sex: number) => <span>{sex===1 ? '女': sex=== 0 ? '男' : '未知'}</span>
     }, {
       title: '学历',
-      dataIndex: 'birth',
-      key: 'birth'
+      dataIndex: 'education',
+      key: 'education'
     }, {
       title: '电话',
       dataIndex: 'phone',
       key: 'phone'
     }, {
       title: '毕业院校',
-      dataIndex: 'school1',
-      key: 'school1'
+      dataIndex: 'graduated_school',
+      key: 'graduated_school'
     }, {
       title: '专业方向',
-      dataIndex: 'school2',
-      key: 'school2'
+      dataIndex: 'profession_category',
+      key: 'profession_category'
     }, {
       title: '英语技能',
-      dataIndex: 'school3',
-      key: 'school3'
+      dataIndex: 'english_level',
+      key: 'english_level',
+      render: (english_level: number) => <span>{setEnglishLevel(english_level)}</span>
     }, {
       title: '审核状态',
       dataIndex: 'status',
@@ -84,8 +86,8 @@ IState > {
       render: (record: any) => (
         <div className="table-operate">
           <Link to={`/userInfo/detail/${record.id}`}>详情</Link>
-          <a onClick={() => this.hadleCheckOut(record.id)}>初审通过</a>
-          <a>取消审核</a>
+          <a onClick={() => this.hadleCheckOut(record.id, 3)}>通过审核</a>
+          <a onClick={() => this.hadleCheckOut(record.id, 2)}>不通过</a>
         </div>
       )
     }
@@ -121,7 +123,7 @@ IState > {
     if (params) {
       this.setState({
         pageInfo: {
-          pageNum: params.pageNum,
+          pageNumber: params.pageNumber,
           pageSize: params.pageSize
         }
       });
@@ -131,6 +133,7 @@ IState > {
       dispatch({
         type: 'userInfo/fetch',
         payload: {
+          sysUserId: localStorage.getItem('sysUserId'),
           ...searchParams,
           ...pageInfo,
           ...params
@@ -147,23 +150,14 @@ IState > {
         dataIndex: 'name',
         componentType: 'Input'
       }, {
-        title: '审核状态',
-        dataIndex: 'status',
+        title: '电话',
+        dataIndex: 'phone',
+        componentType: 'Input'
+      },, {
+        title: '学历',
+        dataIndex: 'education',
         componentType: 'Select',
-        dataSource: [
-          {
-            value: 1,
-            name: '是'
-          }, {
-            value: 0,
-            name: '否'
-          }
-        ]
-      }, {
-        title: '日期',
-        dataIndex: 'times',
-        componentType: 'RangePicker',
-        col: 8
+        dataSource: EDUCATION_ARR
       }
     ];
     return serarchColumns;
@@ -172,19 +166,11 @@ IState > {
   // 搜索
   handleSearch = (values : any) => {
     const {searchData} = this.state
-    let startTime = ''
-    let endTime = ''
-    if (values.times) {
-      startTime = moment(values.times[0]).format('YYYY-MM-DD HH:mm:ss')
-      endTime = moment(values.times[1]).format('YYYY-MM-DD HH:mm:ss')
-    }
+
     this.setState({
       searchData: {
         ...searchData,
-        name: values.name,
-        status: values.status,
-        startTime,
-        endTime
+        ...values
       }
     }, () => {
       this.initData()
@@ -213,22 +199,29 @@ IState > {
     }
   }
 
-  hadleCheckOut = (id: string) => {
+  hadleCheckOut = (id: string, type: number) => {
     const { dispatch } = this.props
-    const callback = (response: any) => {
-      if(response.success){
+    const callback = (res: any) => {
+      if(res.success){
         message.success('操作成功')
+      }else{
+        message.error(res.data)
       }
+    }
+    let info = '审核通过后，考生即可扫描二维码考试，是否通过审核'
+    if(type === 2){
+      info = '确定要拒绝通过吗?'
     }
     confirm({
       title: '审核信息',
-      content: '审核通过后，考生即可扫描二维码考试，是否通过审核？',
+      content: info,
       onOk: () => {
         if(dispatch){
         dispatch({
           type: 'userInfo/checkOut',
           payload: {
-            id,
+            deliveryId: id,
+            state: type,
           },
           callback,
         });
@@ -241,7 +234,6 @@ IState > {
     const {data, loading} = this.props;
     const {selectedRowKeys} = this.state;
     return (
-      <PageHeaderWrapper>
         <Card>
           <div className="flex-container">
             <div className="flex-1">
@@ -264,7 +256,6 @@ IState > {
             onSelectRow={this.handleSelectRows}
             selectedRowKeys={selectedRowKeys}/>
         </Card>
-      </PageHeaderWrapper>
     );
   }
 }

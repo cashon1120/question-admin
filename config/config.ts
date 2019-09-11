@@ -120,12 +120,13 @@ export default {
               name: 'list',
               component: './UserInfo/List'
             },
-            {
-              path: '/userInfo/detail/:id',
-              name: 'detail',
-              component: './UserInfo/Detail'
-            }
           ]
+        },
+        {
+          path: '/userInfo/detail/:id',
+          name: 'userInfoDetail',
+          component: './UserInfo/Detail',
+          hideInMenu: true,
         },
         {
           path:'/report',
@@ -148,7 +149,13 @@ export default {
               path: '/question/add',
               name: 'add',
               component: './Question/Add',
-            }
+            },
+            {
+              path: '/question/detail/:id?',
+              name: 'detail',
+              component: './Question/Add',
+              hideInMenu: true
+            },
           ],
         },
         {
@@ -179,8 +186,14 @@ export default {
           path: '/account',
           name: 'account',
           icon: 'team',
-          authority: ['admin'],
+          // authority: ['admin'],
           component: './Account/Index'
+        },
+        {
+          path: '/empty',
+          name: 'empty',
+          hideInMenu: true,
+          component: './Empty'
         },
         {
           component: './404',
@@ -240,11 +253,11 @@ export default {
   },
   chainWebpack: webpackPlugin,
 
-  // proxy: {
-  //   '/api/': {
-  //     target: 'https://preview.pro.ant.design/',
-  //     changeOrigin: true,
-  //     pathRewrite: { '^/api': '' },
-  //   },
-  // },
+  proxy: {
+    '/api/': {
+      target: 'https://juneee.cn',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' },
+    },
+  },
 } as IConfig;

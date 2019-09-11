@@ -3,12 +3,11 @@ import {Card, Button, message, Modal} from 'antd';
 import {connect} from 'dva';
 import 'antd/dist/antd.css';
 import Link from 'umi/link';
-import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
 import moment from 'moment';
-const { confirm } = Modal;
+const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
   data?: any;
@@ -24,7 +23,7 @@ interface IState {
   };
   pageInfo : {
     pageSize: number;
-    pageNum: number;
+    pageNumber: number;
   };
 }
 
@@ -42,27 +41,27 @@ IState > {
     },
     pageInfo: {
       pageSize: 10,
-      pageNum: 1
+      pageNumber: 1
     }
   };
 
   columns = [
     {
       title: '题目',
-      dataIndex: 'name',
-      key: 'name'
-    },  {
-      title: '创建日期',
-      dataIndex: 'status',
-      key: 'status'
+      dataIndex: 'topic',
+      key: 'topic'
+    }, {
+      title: '问题',
+      dataIndex: 'questions',
+      key: 'questions'
     }, {
       title: '操作',
       width: 200,
-      render: (record: any) => (
+      render: (record : any) => (
         <div className="table-operate">
-          <Link to={`/question/add/${record.id}`}>详情</Link>
-          <a onClick={() => this.hadleCheckOut(record.id)}>修改</a>
-          <a onClick={() => this.hadleCheckOut(record.id)}>删除</a>
+          <Link to={`/question/detail/${record.id}`}>详情</Link>
+          <a onClick={() => this.handleDel(record.id)}>修改</a>
+          <a onClick={() => this.handleDel(record.id)}>删除</a>
         </div>
       )
     }
@@ -85,6 +84,10 @@ IState > {
 
   // 加载数据
   initData(params?: any) {
+    this.setState({loading: true})
+    const callback = () => {
+      this.setState({loading: false})
+    }
     const {dispatch} = this.props;
     const {pageInfo, searchData} = this.state;
     const searchParams = {}
@@ -98,7 +101,7 @@ IState > {
     if (params) {
       this.setState({
         pageInfo: {
-          pageNum: params.pageNum,
+          pageNumber: params.pageNumber,
           pageSize: params.pageSize
         }
       });
@@ -108,10 +111,11 @@ IState > {
       dispatch({
         type: 'question/fetch',
         payload: {
-          ...searchParams,
+          sysUserId: localStorage.getItem('sysUserId'),
           ...pageInfo,
           ...params
-        }
+        },
+        callback
       });
     }
   }
@@ -167,8 +171,8 @@ IState > {
   // 导出详情
   exportFiel = () => {
     const {dispatch} = this.props;
-    const { selectedRowKeys } = this.state
-    if(selectedRowKeys.length === 0){
+    const {selectedRowKeys} = this.state
+    if (selectedRowKeys.length === 0) {
       message.error('请勾选要导出的数据')
       return
     }
@@ -177,56 +181,58 @@ IState > {
     }
   }
 
-  hadleCheckOut = (id: string) => {
-    const { dispatch } = this.props
-    const callback = (response: any) => {
-      if(response.success){
+  handleDel = (id : string) => {
+    const {dispatch} = this.props
+    const callback = (response : any) => {
+      if (response.success) {
         message.success('操作成功')
+        this.initData()
       }
     }
     confirm({
-      title: '审核信息',
-      content: '审核通过后，考生即可扫描二维码考试，是否通过审核？',
+      title: '删除题目',
+      content: '确定要删除该题目吗?',
       onOk: () => {
-        if(dispatch){
-        dispatch({
-          type: 'userInfo/checkOut',
-          payload: {
-            id,
-          },
-          callback,
-        });
+        if (dispatch) {
+          dispatch({
+            type: 'question/del',
+            payload: {
+              sysUserId: localStorage.getItem('sysUserId'),
+              questionId: id
+            },
+            callback
+          });
+        }
       }
-      },
     });
   }
 
   render() {
     const {data, loading} = this.props;
     return (
-      <PageHeaderWrapper>
-        <Card>
-          <div className="flex-container">
-            <div className="flex-1">
+      <Card>
+        <div className="flex-container">
+          <div className="flex-1">
             <TableSearch
-                columns={this.getSerarchColumns()}
-                handleSearch={this.handleSearch}
-                handleFormReset={this.handleFormReset}/>
-            </div>
-            <div>
-              <Link to='/question/add'><Button type="primary">新增题库</Button></Link>
-            </div>
+              columns={this.getSerarchColumns()}
+              handleSearch={this.handleSearch}
+              handleFormReset={this.handleFormReset}/>
           </div>
-          <StandardTable
-            rowKey="id"
-            columns={this.columns}
-            data={data || []}
-            loading={loading}
-            onChangeCombine={(params : object) => this.initData(params)}/>
-        </Card>
-      </PageHeaderWrapper>
+          <div>
+            <Link to='/question/add'>
+              <Button type="primary">新增题库</Button>
+            </Link>
+          </div>
+        </div>
+        <StandardTable
+          rowKey="id"
+          columns={this.columns}
+          data={data || []}
+          loading={loading}
+          onChangeCombine={(params : object) => this.initData(params)}/>
+      </Card>
     );
   }
 }
 
-export default connect(({question, loading} : ConnectState) => ({data: question.data, loading: loading.models.userInfo}))(QuestionList);
+export default connect(({question, loading} : ConnectState) => ({data: question.data, loading: loading.models.question}))(QuestionList);

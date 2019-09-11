@@ -10,7 +10,7 @@ import {UserInfoModelState} from './userInfo'
 import {ReportModelState} from './report'
 import {QcodeModelState} from './qcode'
 import {AccountModelState} from './account'
-import {QuestionModelState} from './account'
+import {QuestionModelState} from './question'
 
 export { GlobalModelState, SettingModelState, UserModelState, LoginModelState, UserInfoModelState,AccountModelState,QuestionModelState };
 
@@ -25,7 +25,8 @@ export interface Loading {
     login?: boolean;
     userInfo?: boolean
     report?: boolean
-    qcode? :boolean
+    qcode? :boolean,
+    question?: boolean
   };
 }
 

@@ -46,13 +46,13 @@ class TableSearch extends PureComponent<FormProps, {}> {
 
   constructor(props: any) {
     super(props);
-    const expandForm = { expandForm: false };
-    if (props.expandForm) {
-      expandForm.expandForm = true;
-    }
-    this.state = {
-      ...expandForm,
-    };
+    // const expandForm = { expandForm: false };
+    // if (props.expandForm) {
+    //   expandForm.expandForm = false;
+    // }
+    // this.state = {
+    //   ...expandForm,
+    // };
   }
 
   toggleForm = () => {
@@ -162,10 +162,10 @@ class TableSearch extends PureComponent<FormProps, {}> {
                               fItem.dataSource.length &&
                               fItem.dataSource.map((selData: any) => (
                                 <Option
-                                  key={selData.id ? selData.id : `selectIndex${selData.value}`}
-                                  value={selData.id ? selData.id : selData.value}
+                                  key={selData.id ? selData.id : `selectIndex${selData}`}
+                                  value={selData.id ? selData.id : selData}
                                 >
-                                  {selData.name || (fItem.selectName && selData[fItem.selectName])}
+                                  {selData}
                                 </Option>
                               ))}
                           </Select>
@@ -264,7 +264,6 @@ class TableSearch extends PureComponent<FormProps, {}> {
               <Button style={{ marginLeft: 3 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              {realcolumns.length > 3 ? this.createToggleForm() : ''}
             </span>
           </div>
         </div>

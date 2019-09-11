@@ -15,7 +15,6 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import { FormComponentProps } from 'antd/es/form';
-import cityArea from '../../assets/sys_area';
 import { legalStr } from '@/utils/utils';
 
 // import styles from './../index.less';
@@ -357,14 +356,6 @@ class ModalFrom extends Component<FormProps, {}> {
                               fItem.conentKey || '',
                             )}
                           </TreeSelect>
-                        );
-                      } else if (fItem.componentType === 'AreaCascader') {
-                        componentTem = (
-                          <Cascader
-                            style={{ width: '100%' }}
-                            options={cityArea()}
-                            placeholder={fItem.placeholder ? fItem.placeholder : '请选择'}
-                          />
                         );
                       } else if (fItem.componentType === 'Cascader') {
                         componentTem = (

@@ -4,7 +4,7 @@ export default {
 
   'menu.userInfo': '基础信息查询',
   'menu.userInfo.list': '资料列表',
-  'menu.userInfo.detail': '资料详情',
+  'menu.userInfoDetail': '资料详情',
 
   'menu.report': '考试成绩查询',
   'menu.report.list': '考试成绩查询',
@@ -12,11 +12,14 @@ export default {
   'menu.question': '题库管理',
   'menu.question.list': '题库列表',
   'menu.question.add': '添加题库',
-  'menu.question.addQuestion': '添加题库',
+  'menu.question.addQuestion': '添加题库一',
+  'menu.question.detail': '题目详情',
 
   'menu.account': '账号管理',
   'menu.account.list': '账号列表',
   'menu.account.add': '添加账号',
+
+  'menu.empty': '空白',
 
   'menu.qcode': '二难码生成',
   'menu.qcode.enroll': '报名二维码',

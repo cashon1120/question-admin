@@ -120,7 +120,7 @@ IState > {
     const {onChange, onChangeCombine} = this.props;
     if (onChangeCombine) {
       const params = {
-        pageNum: pagination.current,
+        pageNumber: pagination.current,
         pageSize: pagination.pageSize
       };
       onChangeCombine(params);
@@ -175,8 +175,8 @@ IState > {
 
   render() {
     const {
+      data,
       data: {
-        data,
         list
       },
       loading,
@@ -200,9 +200,9 @@ IState > {
         pagination = {};
       }
       if (dataSource) {
-        pagination.current = dataSource.pageNum;
-        pagination.total = dataSource.total;
-        pagination.pageNum = dataSource.pageNum;
+        pagination.current = dataSource.pageNumber;
+        pagination.total = data.totalRow;
+        pagination.pageNumber = dataSource.pageNumber;
         pagination.pageSize = dataSource.pageSize;
       }
       dataSource = dataSource.list;
@@ -211,13 +211,12 @@ IState > {
     if (showRowNum && columns && dataSource) {
       this.resetColumn(columns, dataSource);
     }
-
     let paginationProps = null;
     if (ispagination === false) {
       paginationProps = false;
     } else {
       paginationProps = {
-        showTotal: (total : number) => `总共 ${total} 条数据`,
+        showTotal: (total : number) => `总共 ${data.totalRow} 条数据`,
         showSizeChanger: true,
         ...pagination,
         showQuickJumper: true,

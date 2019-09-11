@@ -2,7 +2,7 @@
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
-import {extend, RequestOptionsInit} from 'umi-request';
+import {extend} from 'umi-request';
 import {notification} from 'antd';
 
 const codeMessage = {
@@ -46,43 +46,25 @@ const errorHandler = (error : {
  */
 const request = extend({
   errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
+  credentials: 'include', // 默认请求是否带上cookie,
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  }
 });
 
-request
-  .interceptors
-  .request
-  .use(async(url : string, options : any) => {
-    let c_token = localStorage.getItem("x-auth-token");
-    if (c_token) {
-      const headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'x-auth-token': '123'
-      };
-      return ({
-        url: url,
-        options: {
-          ...options,
-          headers
-        }
-      });
-    } else {
-      const headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'x-auth-token': '123'
-      };
-      return ({
-        url: url,
-        options: {
-          ...options,
-          headers
-        }
-      });
-    }
+// request
+//   .interceptors
+//   .request
+//   .use(async(url : string, options : any) => {
+//     const headers = {
+//       "Content-Type": "application/x-www-form-urlencoded"
+//     };
+//     return ({
+//       url: url,
+//       options: { ...options, headers }
+//     });
 
-  })
+//   })
 
 // response拦截器, 处理response
 // request
