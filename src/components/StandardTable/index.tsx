@@ -216,7 +216,7 @@ IState > {
       paginationProps = false;
     } else {
       paginationProps = {
-        showTotal: (total : number) => `总共 ${data.totalRow} 条数据`,
+        showTotal: (total : number) => `总共 ${data.totalRow || data.length} 条数据`,
         showSizeChanger: true,
         ...pagination,
         showQuickJumper: true,

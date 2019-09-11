@@ -129,10 +129,28 @@ export default {
           hideInMenu: true,
         },
         {
+          path: '/userDelivery',
+          icon: 'check-square',
+          name: 'userDelivery',
+          component: './UserDelivery/List',
+        },
+        {
           path:'/report',
           name: 'report',
           icon: 'profile',
           component: './Report/List'
+        },
+        {
+          path:'/company',
+          name: 'company',
+          icon: 'gold',
+          component: './Company/List'
+        },
+        {
+          path:'/staff',
+          name: 'staff',
+          icon: 'user',
+          component: './Staff/List'
         },
         {
           path: '/question',

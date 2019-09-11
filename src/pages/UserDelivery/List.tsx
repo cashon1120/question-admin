@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-import {Card, message, Modal} from 'antd';
+import {Card,  message, Modal} from 'antd';
 import {connect} from 'dva';
 import 'antd/dist/antd.css';
-import Link from 'umi/link';
+
 import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
-import { setEnglishLevel } from '../../utils/utils'
-import {EDUCATION_ARR} from '../../../public/config'
-const { confirm } = Modal;
+
+const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
   data?: any;
@@ -28,7 +27,7 @@ interface IState {
   };
 }
 
-class UserInfoList extends Component < IProps,
+class UserDeliverList extends Component < IProps,
 IState > {
   state = {
     loading: false,
@@ -52,44 +51,49 @@ IState > {
       dataIndex: 'name',
       key: 'name'
     }, {
-      title: '性别',
-      dataIndex: 'sex',
-      key: 'sex',
-      render: (sex: number) => <span>{sex===1 ? '女': sex=== 0 ? '男' : '未知'}</span>
-    }, {
-      title: '学历',
-      dataIndex: 'education',
-      key: 'education'
-    }, {
       title: '电话',
       dataIndex: 'phone',
       key: 'phone'
     }, {
-      title: '毕业院校',
-      dataIndex: 'graduated_school',
-      key: 'graduated_school'
-    }, {
-      title: '专业方向',
-      dataIndex: 'profession_category',
-      key: 'profession_category'
-    }, {
-      title: '英语技能',
-      dataIndex: 'english_level',
-      key: 'english_level',
-      render: (english_level: number) => <span>{setEnglishLevel(english_level)}</span>
+      title: '学历',
+      dataIndex: 'education',
+      key: 'education',
     }, {
       title: '审核状态',
-      dataIndex: 'status',
-      key: 'status'
+      key: 'is_delivery',
+      render: (record : any) => {
+        let str = ''
+        switch (record.is_delivery) {
+          case 1:
+            str = '待审核'
+            break;
+          case 2:
+            str = '审核未通过'
+            break;
+          case 3:
+            str = '审核通过'
+            break;
+
+          default:
+            str = '未投递'
+            break;
+        }
+        return str
+      }
     }, {
       title: '操作',
-      render: (record: any) => (
-        <div className="table-operate">
-          <Link to={`/userInfo/detail/${record.id}`}>详情</Link>
-          {/* <a onClick={() => this.hadleCheckOut(record.id, 3)}>通过审核</a>
-          <a onClick={() => this.hadleCheckOut(record.id, 2)}>不通过</a> */}
-        </div>
-      )
+      width: 200,
+      render: (record : any) => {
+        if (record.is_delivery === 1) {
+          return (
+            <div className="table-operate">
+              <a onClick={() => this.hadleCheckOut(record.delivery_id, 3)}>通过审核</a>
+              <a onClick={() => this.hadleCheckOut(record.delivery_id, 2)}>不通过</a>
+            </div>
+          )
+        }
+        return null
+      }
     }
   ];
 
@@ -131,7 +135,7 @@ IState > {
 
     if (dispatch) {
       dispatch({
-        type: 'userInfo/fetch',
+        type: 'userDelivery/fetch',
         payload: {
           sysUserId: localStorage.getItem('sysUserId'),
           ...searchParams,
@@ -154,10 +158,24 @@ IState > {
         dataIndex: 'phone',
         componentType: 'Input'
       },, {
-        title: '学历',
-        dataIndex: 'education',
+        title: '审核状态',
+        dataIndex: 'isDelivery',
         componentType: 'Select',
-        dataSource: EDUCATION_ARR
+        dataSource: [
+          {
+            id: 0,
+            value: '未投递'
+          }, {
+            id: 1,
+            value: '待审核'
+          }, {
+            id: 2,
+            value: '审核未通过'
+          }, {
+            id: 3,
+            value: '审核通过'
+          }
+        ]
       }
     ];
     return serarchColumns;
@@ -189,44 +207,45 @@ IState > {
   // 导出详情
   exportFiel = () => {
     const {dispatch} = this.props;
-    const { selectedRowKeys } = this.state
-    if(selectedRowKeys.length === 0){
+    const {selectedRowKeys} = this.state
+    if (selectedRowKeys.length === 0) {
       message.error('请勾选要导出的数据')
       return
     }
     if (dispatch) {
-      dispatch({type: 'userInfo/exportFile', payload: {}});
+      dispatch({type: 'userDelivery/exportFile', payload: {}});
     }
   }
 
-  hadleCheckOut = (id: string, type: number) => {
-    const { dispatch } = this.props
-    const callback = (res: any) => {
-      if(res.success){
+  hadleCheckOut = (id : string, type : number) => {
+    const {dispatch} = this.props
+    const callback = (res : any) => {
+      if (res.success) {
         message.success('操作成功')
-      }else{
+        this.initData()
+      } else {
         message.error(res.data)
       }
     }
     let info = '审核通过后，考生即可扫描二维码考试，是否通过审核'
-    if(type === 2){
+    if (type === 2) {
       info = '确定要拒绝通过吗?'
     }
     confirm({
       title: '审核信息',
       content: info,
       onOk: () => {
-        if(dispatch){
-        dispatch({
-          type: 'userInfo/checkOut',
-          payload: {
-            deliveryId: id,
-            state: type,
-          },
-          callback,
-        });
+        if (dispatch) {
+          dispatch({
+            type: 'userDelivery/checkOut',
+            payload: {
+              deliveryId: id,
+              state: type
+            },
+            callback
+          });
+        }
       }
-      },
     });
   }
 
@@ -234,30 +253,27 @@ IState > {
     const {data, loading} = this.props;
     const {selectedRowKeys} = this.state;
     return (
-        <Card>
-          <div className="flex-container">
-            <div className="flex-1">
-              <TableSearch
-                columns={this.getSerarchColumns()}
-                handleSearch={this.handleSearch}
-                handleFormReset={this.handleFormReset}/>
-            </div>
-            {/* <div>
-              <Button type="primary" onClick={this.exportFiel}>导出详情</Button>
-            </div> */}
+      <Card>
+        <div className="flex-container">
+          <div className="flex-1">
+            <TableSearch
+              columns={this.getSerarchColumns()}
+              handleSearch={this.handleSearch}
+              handleFormReset={this.handleFormReset}/>
           </div>
-          <StandardTable
-            showSelectRow={true}
-            rowKey="id"
-            columns={this.columns}
-            data={data || []}
-            loading={loading}
-            onChangeCombine={(params : object) => this.initData(params)}
-            onSelectRow={this.handleSelectRows}
-            selectedRowKeys={selectedRowKeys}/>
-        </Card>
+        </div>
+        <StandardTable
+          showSelectRow={true}
+          rowKey="delivery_id"
+          columns={this.columns}
+          data={data || []}
+          loading={loading}
+          onChangeCombine={(params : object) => this.initData(params)}
+          onSelectRow={this.handleSelectRows}
+          selectedRowKeys={selectedRowKeys}/>
+      </Card>
     );
   }
 }
 
-export default connect(({userInfo, loading} : ConnectState) => ({data: userInfo.data, loading: loading.models.userInfo}))(UserInfoList);
+export default connect(({userDelivery, loading} : ConnectState) => ({data: userDelivery.data, loading: loading.models.userDelivery}))(UserDeliverList);

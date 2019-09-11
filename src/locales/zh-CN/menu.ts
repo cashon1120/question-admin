@@ -2,9 +2,15 @@ export default {
   'menu.index': '首页',
   'menu.more-blocks': '更多区块',
 
-  'menu.userInfo': '基础信息查询',
+  'menu.userInfo': '考生信息查询',
   'menu.userInfo.list': '资料列表',
   'menu.userInfoDetail': '资料详情',
+
+  'menu.userDelivery': '考生审核',
+
+  'menu.company': '公司管理',
+
+  'menu.staff': '员工管理',
 
   'menu.report': '考试成绩查询',
   'menu.report.list': '考试成绩查询',
@@ -15,7 +21,7 @@ export default {
   'menu.question.addQuestion': '添加题库一',
   'menu.question.detail': '题目详情',
 
-  'menu.account': '账号管理',
+  'menu.account': '系统设置',
   'menu.account.list': '账号列表',
   'menu.account.add': '添加账号',
 

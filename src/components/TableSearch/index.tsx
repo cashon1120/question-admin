@@ -165,7 +165,7 @@ class TableSearch extends PureComponent<FormProps, {}> {
                                   key={selData.id ? selData.id : `selectIndex${selData}`}
                                   value={selData.id ? selData.id : selData}
                                 >
-                                  {selData}
+                                  {selData.value ? selData.value : selData}
                                 </Option>
                               ))}
                           </Select>
@@ -243,7 +243,7 @@ class TableSearch extends PureComponent<FormProps, {}> {
                           />
                         );
                       } else if (fItem.componentType === 'NumberRange') {
-                        componentTem = <NumberRange />;
+                        componentTem = <NumberRange style={{width: 100}} />;
                       } else if (fItem.componentType === 'InputNumber') {
                         componentTem = <InputNumber style={{ width: '100%' }} />;
                       } else {
@@ -280,12 +280,12 @@ class TableSearch extends PureComponent<FormProps, {}> {
 
   handleSearch = (e: any) => {
     e.preventDefault();
-
+   
     const { handleSearch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
+      console.log(fieldsValue)
       const values = {
         ...fieldsValue,
         // updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),

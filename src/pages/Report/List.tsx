@@ -7,8 +7,7 @@ import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
-import moment from 'moment';
-const { confirm } = Modal;
+const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
   data?: any;
@@ -24,7 +23,7 @@ interface IState {
   };
   pageInfo : {
     pageSize: number;
-    pageNum: number;
+    pageNumber: number;
   };
 }
 
@@ -42,7 +41,7 @@ IState > {
     },
     pageInfo: {
       pageSize: 10,
-      pageNum: 1
+      pageNumber: 1
     }
   };
 
@@ -52,41 +51,46 @@ IState > {
       dataIndex: 'name',
       key: 'name'
     }, {
-      title: '身份证号',
-      dataIndex: 'sex',
-      key: 'area'
+      title: '投递公司',
+      dataIndex: 'company_name',
+      key: 'company_name'
     }, {
-      title: '电话',
-      dataIndex: 'phone',
-      key: 'phone'
+      title: '开始时间',
+      dataIndex: 'start_time',
+      key: 'start_time'
+    },, {
+      title: '结束时间',
+      dataIndex: 'end_time',
+      key: 'end_time'
     }, {
-      title: '毕业院校',
-      dataIndex: 'school1',
-      key: 'school1'
-    }, {
-      title: '专业方向',
-      dataIndex: 'school2',
-      key: 'school2'
-    }, {
-      title: '英语技能',
-      dataIndex: 'school3',
-      key: 'school3'
-    },{
-      title: '政治面貌',
-      dataIndex: 'school4',
-      key: 'school4'
-    }, 
-    {
-      title: '成绩',
+      title: '得分',
       dataIndex: 'score',
       key: 'score'
     }, {
+      title: '状态',
+      render: (record : any) => {
+        let str = ''
+        switch (record.state) {
+          case 1:
+            str = '答题中'
+            break;
+          case 2:
+            str = '答题完成'
+            break;
+          case 3:
+            str = '答题失效'
+            break;
+          default:
+            str = '二维码失效'
+            break;
+        }
+        return str
+      }
+    }, {
       title: '操作',
-      render: (record: any) => (
+      render: (record : any) => (
         <div className="table-operate">
           <Link to={`/report/detail/${record.id}`}>详情</Link>
-          <a onClick={() => this.hadleCheckOut(record.id)}>初审通过</a>
-          <a>取消审核</a>
         </div>
       )
     }
@@ -122,7 +126,7 @@ IState > {
     if (params) {
       this.setState({
         pageInfo: {
-          pageNum: params.pageNum,
+          pageNumber: params.pageNumber,
           pageSize: params.pageSize
         }
       });
@@ -132,6 +136,7 @@ IState > {
       dispatch({
         type: 'report/fetch',
         payload: {
+          sysUserId: localStorage.getItem('sysUserId'),
           ...searchParams,
           ...pageInfo,
           ...params
@@ -148,22 +153,28 @@ IState > {
         dataIndex: 'name',
         componentType: 'Input'
       }, {
-        title: '学历',
-        dataIndex: 'status',
+        title: '状态',
+        dataIndex: 'state',
         componentType: 'Select',
         dataSource: [
           {
-            value: 1,
-            name: '是'
+            id: 1,
+            value: '答题中'
           }, {
-            value: 0,
-            name: '否'
+            id: 2,
+            value: '答题完成'
+          }, {
+            id: 3,
+            value: '答题失效'
+          }, {
+            id: 4,
+            value: '二维码失效'
           }
         ]
       }, {
-        title: '日期',
-        dataIndex: 'times',
-        componentType: 'RangePicker',
+        title: '分数',
+        dataIndex: 'score',
+        componentType: 'NumberRange',
         col: 8
       }
     ];
@@ -173,19 +184,16 @@ IState > {
   // 搜索
   handleSearch = (values : any) => {
     const {searchData} = this.state
-    let startTime = ''
-    let endTime = ''
-    if (values.times) {
-      startTime = moment(values.times[0]).format('YYYY-MM-DD HH:mm:ss')
-      endTime = moment(values.times[1]).format('YYYY-MM-DD HH:mm:ss')
+    let score : any = null
+    if (values.score) {
+      score = `${values.score.start}a${values.score.end}`
     }
     this.setState({
       searchData: {
         ...searchData,
         name: values.name,
-        status: values.status,
-        startTime,
-        endTime
+        state: values.state,
+        score
       }
     }, () => {
       this.initData()
@@ -204,8 +212,8 @@ IState > {
   // 导出详情
   exportFiel = () => {
     const {dispatch} = this.props;
-    const { selectedRowKeys } = this.state
-    if(selectedRowKeys.length === 0){
+    const {selectedRowKeys} = this.state
+    if (selectedRowKeys.length === 0) {
       message.error('请勾选要导出的数据')
       return
     }
@@ -214,10 +222,10 @@ IState > {
     }
   }
 
-  hadleCheckOut = (id: string) => {
-    const { dispatch } = this.props
-    const callback = (response: any) => {
-      if(response.success){
+  hadleCheckOut = (id : string) => {
+    const {dispatch} = this.props
+    const callback = (response : any) => {
+      if (response.success) {
         message.success('操作成功')
       }
     }
@@ -225,16 +233,12 @@ IState > {
       title: '审核信息',
       content: '审核通过后，考生即可扫描二维码考试，是否通过审核？',
       onOk: () => {
-        if(dispatch){
-        dispatch({
-          type: 'report/checkOut',
-          payload: {
-            id,
-          },
-          callback,
-        });
+        if (dispatch) {
+          dispatch({type: 'report/checkOut', payload: {
+              id
+            }, callback});
+        }
       }
-      },
     });
   }
 

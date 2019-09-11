@@ -216,9 +216,9 @@ class ModalFrom extends Component<FormProps, {}> {
                             {fItem.dataSource.map((selData: any) => (
                               <Option
                                 key={`selectIndex${selData.value || selData.id}`}
-                                value={selData.value || selData.id}
+                                value={selData.id || selData.value}
                               >
-                                {selData.name || (fItem.selectName && selData[fItem.selectName])}
+                                {selData.value || (fItem.selectName && selData[fItem.selectName])}
                               </Option>
                             ))}
                           </Select>

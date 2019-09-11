@@ -30,7 +30,8 @@ export default class PriceInput extends PureComponent {
   };
 
   handleStartChange = e => {
-    const start = parseInt(e.target.value || 0, 10);
+    let start = parseInt(e.target.value || 0, 10);
+    start = Math.max(0, start)
     if (!('value' in this.props)) {
       this.setState({ start });
     }
@@ -38,7 +39,8 @@ export default class PriceInput extends PureComponent {
   };
 
   handleEndChange = e => {
-    const end = parseInt(e.target.value || 0, 10);
+    let end = parseInt(e.target.value || 0, 10);
+    end = Math.min(100, end)
     if (!('value' in this.props)) {
       this.setState({ end });
     }
@@ -60,14 +62,14 @@ export default class PriceInput extends PureComponent {
           type="text"
           value={start}
           onChange={this.handleStartChange}
-          style={{ width: '45%', marginRight: 1 }}
+          style={{ width: 60, marginRight: 1 }}
         />
         -
         <Input
           type="text"
           value={end}
           onChange={this.handleEndChange}
-          style={{ width: '45%', marginLeft: 1 }}
+          style={{ width: 60, marginLeft: 1 }}
         />
       </span>
     );

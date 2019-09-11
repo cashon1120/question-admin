@@ -7,12 +7,15 @@ import { DefaultSettings as SettingModelState } from '../../config/defaultSettin
 import { UserModelState } from './user';
 import { LoginModelState } from './login';
 import {UserInfoModelState} from './userInfo'
+import {UserDeliveryModelState} from './userDelivery'
 import {ReportModelState} from './report'
 import {QcodeModelState} from './qcode'
 import {AccountModelState} from './account'
 import {QuestionModelState} from './question'
+import {CompanyModelState} from './company'
+import {StaffModelState} from './staff'
 
-export { GlobalModelState, SettingModelState, UserModelState, LoginModelState, UserInfoModelState,AccountModelState,QuestionModelState };
+export { GlobalModelState, SettingModelState, UserModelState, LoginModelState, UserInfoModelState,AccountModelState,QuestionModelState,CompanyModelState,StaffModelState };
 
 export interface Loading {
   global: boolean;
@@ -26,7 +29,10 @@ export interface Loading {
     userInfo?: boolean
     report?: boolean
     qcode? :boolean,
-    question?: boolean
+    question?: boolean,
+    userDelivery?: boolean,
+    company?: boolean,
+    staff?: boolean
   };
 }
 
@@ -40,7 +46,10 @@ export interface ConnectState {
   report: ReportModelState
   qcode: QcodeModelState,
   account: AccountModelState,
-  question: QuestionModelState
+  question: QuestionModelState,
+  userDelivery: UserDeliveryModelState
+  company: CompanyModelState,
+  staff: StaffModelState
 }
 
 export type Effect = (

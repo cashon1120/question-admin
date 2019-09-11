@@ -17,7 +17,7 @@ export async function exportFile(params: object): Promise<any> {
 }
 
 export async function fetch(params: object): Promise<{}> {
-  return request(API_URL + '/admin/sys/getExamList', {
+  return request(API_URL + '/admin/sys/getDeliveryList', {
     method: 'POST',
     requestType: 'form',
     data: params,
