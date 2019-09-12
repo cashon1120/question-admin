@@ -8,6 +8,7 @@ import {
   message
 } from 'antd';
 import {connect} from 'dva';
+import moment from 'moment';
 import {FormComponentProps} from 'antd/es/form';
 import 'antd/dist/antd.css';
 import {Dispatch} from 'redux';
@@ -22,7 +23,7 @@ interface FormProps extends FormComponentProps {
 interface IState {
   spinLoading : boolean;
   loading : boolean;
-  answerTime : string
+  setTimeArr : any[]
 }
 
 class SetTimer extends Component < FormProps,
@@ -30,7 +31,7 @@ IState > {
   state = {
     spinLoading: false,
     loading: false,
-    answerTime: ''
+    setTimeArr: []
   };
 
   componentDidMount() {
@@ -44,7 +45,7 @@ IState > {
     const callback = (res : any) => {
       this.setState({spinLoading: false})
       if (res.success) {
-        this.setState({answerTime: res.answerTime})
+        this.setState({setTimeArr: res.data})
       }
     }
     const payload = {
@@ -53,11 +54,44 @@ IState > {
     dispatch({type: 'account/getSetting', payload, callback});
   }
 
-  handleSubmitModal() {}
+  handleSubmit = (e : React.FormEvent) => {
+    const {dispatch, form} = this.props;
+
+    const callback = (res : any) => {
+      if (res.success) {
+        message.success('添加成功')
+      } else {
+        message.error(res.msg || res.data)
+      }
+      this.setState({loading: false})
+    }
+    e.preventDefault();
+    form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        const startTime = moment(values.times[0]).format('YYYY-MM-DD HH:mm:ss')
+        const endTime = moment(values.times[1]).format('YYYY-MM-DD HH:mm:ss')
+        const payload = {
+          sysUserId: localStorage.getItem('sysUserId'),
+          startTime,
+          endTime
+        }
+        this.setState({loading: true})
+        dispatch({type: 'account/setTime', payload, callback});
+      }
+    });
+  };
 
   render() {
-    let {loading, spinLoading, answerTime} = this.state
+    let {loading, spinLoading, setTimeArr} = this.state
+    const dateFormat = 'YYYY-MM-DD'
+    const initialValue = setTimeArr.length > 0
+      ? [
+        moment(setTimeArr[0].value, dateFormat),
+        moment(setTimeArr[1].value, dateFormat)
+      ]
+      : null
     const rangeConfig = {
+      initialValue,
       rules: [
         {
           type: 'array',
@@ -71,13 +105,10 @@ IState > {
       }} = this.props;
     return (
       <Card>
-        <Form {...formItemLayout} onSubmit={this.handleSubmitModal}>
+        <Form {...formItemLayout} onSubmit={this.handleSubmit}>
           <Form.Item label="有效日期">
-            {getFieldDecorator('range-picker', rangeConfig)(<RangePicker
-              showTime={{
-              format: 'HH:mm'
-            }}
-              format="YYYY-MM-DD HH:mm"
+            {getFieldDecorator('times', rangeConfig)(<RangePicker
+              format="YYYY-MM-DD"
               placeholder={['二维码有效开始日期', '二维码有效结束时间']}/>)}
             <Button
               type="primary"

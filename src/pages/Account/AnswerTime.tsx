@@ -13,7 +13,7 @@ import {connect} from 'dva';
 import {FormComponentProps} from 'antd/es/form';
 import 'antd/dist/antd.css';
 import {Dispatch} from 'redux';
-import {formItemLayout, submitFormLayout} from '../../../public/config';
+import {formItemLayout} from '../../../public/config';
 
 const FormItem = Form.Item;
 
@@ -37,23 +37,23 @@ IState > {
   };
 
   componentDidMount() {
-    this.getSetTime()
+    this.getAnswerTime()
   }
 
-  getSetTime() {
+  getAnswerTime() {
     this.setState({spinLoading: true})
     const {dispatch} = this.props
-
     const callback = (res : any) => {
+      console.log(res)
       this.setState({spinLoading: false})
       if (res.success) {
-        this.setState({answerTime: res.answerTime})
+        this.setState({answerTime: res.data[0].value})
       }
     }
     const payload = {
       sysUserId: localStorage.getItem('sysUserId')
     }
-    dispatch({type: 'account/getSetting', payload, callback});
+    dispatch({type: 'account/getAnswerTime', payload, callback});
   }
 
   handleSubmit = (e : React.FormEvent) => {
@@ -61,7 +61,7 @@ IState > {
 
     const callback = (res : any) => {
       if (res.success) {
-        message.info('添加成功')
+        message.success('添加成功')
       } else {
         message.error(res.msg || res.data)
       }
@@ -70,9 +70,12 @@ IState > {
     e.preventDefault();
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const payload = {}
+        const payload = {
+          sysUserId: localStorage.getItem('sysUserId'),
+          answerTime: values.answerTime
+        }
         this.setState({loading: true})
-        dispatch({type: 'account/getSeting', payload, callback});
+        dispatch({type: 'account/setAnswerTime', payload, callback});
       }
     });
   };
@@ -104,17 +107,19 @@ IState > {
                 })(<Input style={{
                   width: 200
                 }}/>)}
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  style={{
+                  marginLeft: 20
+                }}>
+                  提交
+                </Button>
               </Col>
             </Row>
           </FormItem>
 
-          <FormItem {...submitFormLayout} style={{
-            marginTop: 32
-          }}>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              保存
-            </Button>
-          </FormItem>
         </Form>
         <div className={spinLoading
           ? 'spin'

@@ -10,8 +10,25 @@ export async function getSetting(params: object): Promise<any> {
 }
 
 export async function setTime(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/settingTime', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
+export async function setAnswerTime(params: object): Promise<any> {
   return request(API_URL + '/admin/sys/settingAnswerTime', {
     method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
+export async function getAnswerTime(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/getAnswerTime', {
+    method: 'POST',
+    requestType: 'form',
     data: params,
   });
 }

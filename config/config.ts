@@ -213,14 +213,14 @@ export default {
           // authority: ['admin'],
           routes: [
             {
-              path: '/account/setting',
+              path: '/account/answerTime',
               name: 'setting',
-              component: './Account/Setting',
+              component: './Account/AnswerTime',
             },
             {
-              path: '/account/getSetting',
+              path: '/account/codeTime',
               name: 'getSetting',
-              component: './Account/GetSetting',
+              component: './Account/CodeTime',
             },
           ]
         },
