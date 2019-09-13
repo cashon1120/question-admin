@@ -60,7 +60,6 @@ IState > {
       render: (record : any) => (
         <div className="table-operate">
           <Link to={`/question/detail/${record.id}`}>详情</Link>
-          <a onClick={() => this.handleDel(record.id)}>修改</a>
           <a onClick={() => this.handleDel(record.id)}>删除</a>
         </div>
       )

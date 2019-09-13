@@ -46,7 +46,7 @@ IState > {
     // 定义异步回调
     const callback = (res : any) => {
       if (res.success) {
-        message.info('操作成功')
+        message.success('操作成功')
       } else {
         message.error(res.data)
       }

@@ -31,7 +31,7 @@ IState > {
     this.state = {
       userInfo: {},
       id: props.match.params.id,
-      spinLoading: false
+      spinLoading: true
     };
   }
 
@@ -68,6 +68,9 @@ IState > {
       if (res.success) {
         this.setState({userInfo: res.data})
       }
+      this.setState({
+        spinLoading: false
+      })
     }
     if (dispatch) {
       dispatch({
@@ -81,7 +84,7 @@ IState > {
   }
 
   render() {
-    const {userInfo, id, spinLoading} = this.state
+    const {userInfo, spinLoading} = this.state
     const englishLevel = setEnglishLevel(userInfo.english_level)
     const computerLevel = setComputerLevel(userInfo.computer_level)
     return (

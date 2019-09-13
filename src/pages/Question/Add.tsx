@@ -35,7 +35,8 @@ interface IState {
   isMultipleSelection : number,
   topic : string,
   questions : string,
-  questionId : string
+  questionId : string,
+  lastCorrectIndex : number | null
 }
 
 class AddQuestion extends Component < FormProps,
@@ -58,7 +59,8 @@ IState > {
       isMultipleSelection: 1,
       topic: '',
       questions: '',
-      questionId: props.match.params.id
+      questionId: props.match.params.id,
+      lastCorrectIndex: null
     };
   }
 
@@ -101,11 +103,11 @@ IState > {
   }
 
   getQuestionDetail() {
-    this.changeSpinLoading()
+    this.changeSpinLoading(true)
     const {questionId} = this.state
     const {dispatch} = this.props
     const callback = (res : any) => {
-      this.changeSpinLoading()
+      this.changeSpinLoading(false)
       if (res.success) {
         const {type, is_multiple_selection, topic, questions} = res.data.question
         let answers : any[] = []
@@ -113,7 +115,10 @@ IState > {
         res
           .data
           .option
-          .forEach((item : any) => {
+          .forEach((item : any, index : number) => {
+            if (is_multiple_selection === 2 && item.is_correct) {
+              this.setState({lastCorrectIndex: index})
+            }
             answers.push({
               detail: item.detail,
               id: item.id,
@@ -258,10 +263,9 @@ IState > {
   }
 
   // 显示 / 隐藏 loading
-  changeSpinLoading() {
-    const {spinLoading} = this.state
+  changeSpinLoading(tag: boolean) {
     this.setState({
-      spinLoading: !spinLoading
+      spinLoading: tag
     })
   }
 
@@ -294,14 +298,14 @@ IState > {
       oldAnswers: JSON.parse(JSON.stringify(answers))
     })
     if (optionId) {
-      this.changeSpinLoading()
+      this.changeSpinLoading(true)
       const callback = (res : any) => {
         if (res.success) {
           message.success('删除成功')
         } else {
           message.error(res.data)
         }
-        this.changeSpinLoading()
+        this.changeSpinLoading(false)
       }
       const payload = {
         sysUserId: localStorage.getItem('sysUserId'),
@@ -313,47 +317,63 @@ IState > {
 
   // 更新选项
   handleEditOption = (index : number) => {
-    const {answers, questionId} = this.state
+    const {answers, questionId, isMultipleSelection, lastCorrectIndex} = this.state
     const {dispatch} = this.props
     const option = answers[index]
     const optionId = option.id
-    const { detail, isCorrect} = option
+    const {detail, isCorrect} = option
     if (optionId) {
-      this.changeSpinLoading()
+      this.changeSpinLoading(true)
       const callback = (res : any) => {
         if (res.success) {
           message.success('修改成功')
         } else {
           message.error(res.data)
         }
-        this.changeSpinLoading()
+        this.changeSpinLoading(false)
       }
       const payload = {
         sysUserId: localStorage.getItem('sysUserId'),
         optionId,
         detail,
-        isCorrect,
+        isCorrect
       }
       dispatch({type: 'question/updateOption', payload, callback});
-    }else{
-
+    } else {
       // 新增答案
-      this.changeSpinLoading()
+      this.changeSpinLoading(true)
       const callback = (res : any) => {
         if (res.success) {
           message.success('添加成功')
+          this.getQuestionDetail()
         } else {
           message.error(res.data)
         }
-        this.changeSpinLoading()
+        this.changeSpinLoading(false)
       }
       const payload = {
         sysUserId: localStorage.getItem('sysUserId'),
         questionId,
         detail,
-        isCorrect,
+        isCorrect
       }
       dispatch({type: 'question/addOption', payload, callback});
+    }
+
+    // 如果是单选,把上一个正确答案改为非正确答案
+    if (isMultipleSelection === 2 && isCorrect) {
+      if (lastCorrectIndex !== null) {
+        if(answers[lastCorrectIndex].del){
+          return
+        }
+        answers[lastCorrectIndex].isCorrect = 0
+        this.setState({
+          answers
+        }, () => {
+          this.handleEditOption(lastCorrectIndex)
+          this.setState({lastCorrectIndex: index})
+        })
+      }
     }
   }
 
@@ -523,7 +543,9 @@ IState > {
                           }}
                             onClick={() => {
                             this.handleEditOption(index)
-                          }}>{item.id ? '确认修改' : '新增答案'}</a>
+                          }}>{item.id
+                              ? '确认修改'
+                              : '新增答案'}</a>
                         : null}
 
                     </Fragment>
