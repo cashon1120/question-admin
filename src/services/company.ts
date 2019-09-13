@@ -9,6 +9,14 @@ export async function del(params: object): Promise<any> {
   });
 }
 
+export async function setImg(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/setKsImgUrl', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
 export async function add(params: object): Promise<any> {
   return request(API_URL + '/admin/sys/addCompany', {
     method: 'POST',

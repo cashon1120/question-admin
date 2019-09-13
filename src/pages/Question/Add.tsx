@@ -27,11 +27,10 @@ interface FormProps extends FormComponentProps {
 }
 
 interface IState {
-  spinLoading: boolean;
+  spinLoading : boolean;
   loading : boolean;
-  answers_1 : any[];
-  answers_2 : any[];
-  answers_3 : any[];
+  oldAnswers : any[];
+  answers : any[];
   type : number,
   isMultipleSelection : number,
   topic : string,
@@ -41,96 +40,101 @@ interface IState {
 
 class AddQuestion extends Component < FormProps,
 IState > {
-  state = {
-    spinLoading: false,
-    loading: false,
-    answers_1: [
-      {
-        detail: '',
-        isCorrect: 0,
-        score: 0,
-        del: false
-      }, {
-        detail: '',
-        isCorrect: 0,
-        score: 0,
-        del: false
-      }, {
-        detail: '',
-        isCorrect: 0,
-        score: 0,
-        del: false
-      }, {
-        detail: '',
-        isCorrect: 0,
-        score: 0,
-        del: false
-      }
-    ],
-    answers_2: [
-      {
-        detail: '',
-        isCorrect: 0,
-        score: 0,
-        del: false
-      }, {
-        score: 0,
-        detail: '',
-        isCorrect: 0,
-        del: false
-      }, {
-        score: 0,
-        detail: '',
-        isCorrect: 0,
-        del: false
-      }, {
-        score: 0,
-        detail: '',
-        isCorrect: 0,
-        del: false
-      }
-    ],
-    answers_3: [
-      {
-        score: 0,
-        detail: '',
-        isCorrect: 0,
-        del: false
-      }, {
-        score: 0,
-        detail: '',
-        isCorrect: 0,
-        del: false
-      }
-    ],
-    type: 1,
-    isMultipleSelection: 1,
-    topic: '',
-    questions: '',
-    questionId: this.props.match.params.id
-  };
+  constructor(props : any) {
+    super(props)
+    this.state = {
+      spinLoading: false,
+      loading: false,
+      answers: [
+        {
+          detail: '',
+          isCorrect: 0,
+          score: 0,
+          del: false
+        }
+      ],
+      oldAnswers: [],
+      type: 1,
+      isMultipleSelection: 1,
+      topic: '',
+      questions: '',
+      questionId: props.match.params.id
+    };
+  }
 
   componentDidMount() {
     const {questionId} = this.state
     if (questionId) {
       this.getQuestionDetail()
+    } else {
+      this.setAnswersLength()
     }
   }
 
+  // 根据答题类型修改answer
+  setAnswersLength() {
+    const {isMultipleSelection, topic, questions} = this.state
+    const {form} = this.props
+    let answers = []
+
+    setTimeout(() => {
+      form.resetFields()
+      form.setFieldsValue({['topic']: topic, ['questions']: questions});
+    }, 0);
+
+    if (isMultipleSelection === 3) {
+      for (let i = 0; i < 2; i += 1) {
+        let detail = i === 0
+          ? '是'
+          : '否'
+        answers.push({detail, isCorrect: 0, score: 0, del: false})
+      }
+    } else {
+      for (let i = 0; i < 4; i += 1) {
+        answers.push({detail: '', isCorrect: 0, score: 0, del: false})
+      }
+      this.setState({
+        oldAnswers: JSON.parse(JSON.stringify(answers))
+      })
+    }
+    this.setState({answers})
+  }
+
   getQuestionDetail() {
-    this.setState({
-      spinLoading: true
-    })
+    this.changeSpinLoading()
     const {questionId} = this.state
     const {dispatch} = this.props
     const callback = (res : any) => {
-      this.setState({
-        spinLoading: false
-      })
+      this.changeSpinLoading()
       if (res.success) {
         const {type, is_multiple_selection, topic, questions} = res.data.question
-        if (is_multiple_selection === 1) {}
-        this.setState({type, isMultipleSelection: is_multiple_selection, topic, questions})
+        let answers : any[] = []
+
+        res
+          .data
+          .option
+          .forEach((item : any) => {
+            answers.push({
+              detail: item.detail,
+              id: item.id,
+              isCorrect: item.is_correct,
+              publish_time: item.publish_time,
+              question_id: item.question_id,
+              score: item.score,
+              del: false
+            })
+          })
+        this.setState({type, isMultipleSelection: is_multiple_selection, topic, questions, answers})
+
+        if (is_multiple_selection === 3) {
+          let oldAnswers = []
+          for (let i = 0; i < 4; i += 1) {
+            oldAnswers.push({detail: '', isCorrect: 0, score: 0, del: false})
+          }
+          this.setState({oldAnswers})
+        } else {
+          this.setState({oldAnswers: answers})
+        }
       }
     }
     const payload = {
@@ -140,13 +144,19 @@ IState > {
     dispatch({type: 'question/detail', payload, callback});
   }
 
+  // 提交 / 修改答题
   handleSubmit = (e : React.FormEvent) => {
     const {dispatch, form} = this.props;
-    const {answers_1, answers_2, answers_3, isMultipleSelection} = this.state
+    const {answers, isMultipleSelection, questionId} = this.state
+
     let options : any[] = []
     const callback = (res : any) => {
       if (res.success) {
-        router.push('/empty')
+        if (questionId) {
+          message.success('修改成功')
+        } else {
+          router.push('/empty')
+        }
       } else {
         message.error(res.msg || res.data)
       }
@@ -156,152 +166,211 @@ IState > {
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         let rightAnswers = 0
-        if (isMultipleSelection === 1) {
-          options = answers_1
-          answers_1.forEach((item : any) => {
-            if (item.isCorrect) {
-              rightAnswers += 1
-            }
-          })
-        }
-        if (isMultipleSelection === 2) {
-          options = answers_2
-          answers_2.forEach((item : any) => {
-            if (item.isCorrect) {
-              rightAnswers += 1
-            }
-          })
-        }
-        if (isMultipleSelection === 3) {
-          options = answers_3
-          answers_3.forEach((item : any) => {
-            if (item.isCorrect) {
-              rightAnswers += 1
-            }
-          })
-        }
+        answers.forEach((item : any) => {
+          if (item.isCorrect) {
+            rightAnswers += 1
+          }
+        })
 
         if (rightAnswers === 0) {
           message.error('请至少选择一个正确答案!')
           return
         }
-        const data = {
-          type: values.type,
-          isMultipleSelection,
-          topic: values.topic,
-          questions: values.questions,
-          score: 0,
-          options
+        options = answers.filter((item : any) => item.del === false)
+        let payload = {}
+        let url = ''
+        if (questionId) {
+          payload = {
+            questionId,
+            sysUserId: localStorage.getItem('sysUserId'),
+            type: values.type,
+            isMultipleSelection,
+            topic: values.topic,
+            questions: values.questions
+          }
+          url = 'question/update'
+        } else {
+          const data = {
+            type: values.type,
+            isMultipleSelection,
+            topic: values.topic,
+            questions: values.questions,
+            score: 0,
+            options
+          }
+          payload = {
+            sysUserId: localStorage.getItem('sysUserId'),
+            jsonString: JSON.stringify(data)
+          }
+          url = 'question/add'
         }
-        const payload = {
-          sysUserId: localStorage.getItem('sysUserId'),
-          jsonString: JSON.stringify(data)
-        }
+
         this.setState({loading: true})
-        dispatch({type: 'question/add', payload, callback});
+        dispatch({type: url, payload, callback});
       }
     });
+
   };
 
+  // 选择正确答案
   handleChangeRight = (index : number) => {
-    const {answers_1, answers_2, answers_3, isMultipleSelection} = this.state
+    const {answers, isMultipleSelection} = this.state
     if (isMultipleSelection === 1) {
-      const isCorrect = answers_1[index].isCorrect
-      answers_1[index].isCorrect = isCorrect === 1
+      const isCorrect = answers[index].isCorrect
+      answers[index].isCorrect = isCorrect === 1
         ? 0
         : 1
-
-      this.setState({answers_1})
-    }
-    if (isMultipleSelection === 2) {
-      answers_2.forEach((item, ind) => {
-        answers_2[ind].isCorrect = 0
+    } else {
+      answers.forEach((item, ind) => {
+        answers[ind].isCorrect = 0
       })
-      answers_2[index].isCorrect = 1
-      this.setState({answers_2})
+      answers[index].isCorrect = 1
     }
-    if (isMultipleSelection === 3) {
-      answers_3.forEach((item, ind) => {
-        answers_3[ind].isCorrect = 0
-      })
-      answers_3[index].isCorrect = 1
-      this.setState({answers_3})
-    }
-
+    this.setState({answers})
   }
 
-  //
+  // 题目种类切换
   onTypeChange = (e : any) => {
     const value = e.target.value
     this.setState({type: value})
   }
 
+  // 单选/多选/判断题 切换
   onMultipChange = (e : any) => {
     const value = e.target.value
-    this.setState({isMultipleSelection: value})
+    const {oldAnswers, answers} = this.state
+    this.setState({
+      isMultipleSelection: value
+    }, () => {
+      if (value === 3) {
+        this.setState({
+          oldAnswers: JSON.parse(JSON.stringify(answers))
+        })
+        this.setAnswersLength()
+      } else {
+        if (oldAnswers) {
+          this.setState({
+            answers: JSON.parse(JSON.stringify(oldAnswers))
+          })
+        }
+      }
+    })
   }
 
-  // 删除答案
-  deleteAnswer = (index : number) => {
-    const {answers_1, answers_2, answers_3, isMultipleSelection} = this.state
-    if (isMultipleSelection === 1) {
-      answers_1[index].del = true
-      this.setState({answers_1})
-    }
-    if (isMultipleSelection === 2) {
-      answers_2[index].del = true
-      this.setState({answers_2})
-    }
-    if (isMultipleSelection === 3) {
-      answers_3[index].del = true
-      this.setState({answers_3})
-    }
-    console.log(answers_1)
+  // 显示 / 隐藏 loading
+  changeSpinLoading() {
+    const {spinLoading} = this.state
+    this.setState({
+      spinLoading: !spinLoading
+    })
   }
 
   // 输入答案
   handleChangeAnswer = (e : any, index : number) => {
-    const {answers_1, answers_2, answers_3, isMultipleSelection} = this.state
+    const {answers} = this.state
     const value = e.target.value
-    if (isMultipleSelection === 1) {
-      answers_1[index].detail = value
-      this.setState({answers_1})
-    }
-    if (isMultipleSelection === 2) {
-      answers_2[index].detail = value
-      this.setState({answers_2})
-    }
-    if (isMultipleSelection === 3) {
-      answers_3[index].detail = value
-      this.setState({answers_3})
-    }
+    answers[index].detail = value
+    this.setState({
+      answers,
+      oldAnswers: JSON.parse(JSON.stringify(answers))
+    })
   }
 
-  // 添加更多答案
+  // 添加更多答案选项
   handleAddAnswer = () => {
-    const {answers_1, answers_2, answers_3, isMultipleSelection} = this.state
-    if (isMultipleSelection === 1) {
-      answers_1.push({detail: '', isCorrect: 0, score: 0, del: false})
-      this.setState({answers_1})
-    }
-    if (isMultipleSelection === 2) {
-      answers_2.push({detail: '', isCorrect: 0, score: 0, del: false})
-      this.setState({answers_2})
-    }
-    if (isMultipleSelection === 3) {
-      answers_3.push({detail: '', isCorrect: 0, score: 0, del: false})
-      this.setState({answers_3})
+    const {answers} = this.state
+    answers.push({detail: '', isCorrect: 0, score: 0, del: false})
+    this.setState({answers})
+  }
+
+  // 删除答案选项
+  handleDeleteOption = (index : number) => {
+    const {answers} = this.state
+    const {dispatch} = this.props
+    const optionId = answers[index].id
+    answers[index].del = true
+    this.setState({
+      answers,
+      oldAnswers: JSON.parse(JSON.stringify(answers))
+    })
+    if (optionId) {
+      this.changeSpinLoading()
+      const callback = (res : any) => {
+        if (res.success) {
+          message.success('删除成功')
+        } else {
+          message.error(res.data)
+        }
+        this.changeSpinLoading()
+      }
+      const payload = {
+        sysUserId: localStorage.getItem('sysUserId'),
+        optionId
+      }
+      dispatch({type: 'question/delOption', payload, callback});
     }
   }
 
-  updateOption = (index : number) => {}
+  // 更新选项
+  handleEditOption = (index : number) => {
+    const {answers, questionId} = this.state
+    const {dispatch} = this.props
+    const option = answers[index]
+    const optionId = option.id
+    const { detail, isCorrect} = option
+    if (optionId) {
+      this.changeSpinLoading()
+      const callback = (res : any) => {
+        if (res.success) {
+          message.success('修改成功')
+        } else {
+          message.error(res.data)
+        }
+        this.changeSpinLoading()
+      }
+      const payload = {
+        sysUserId: localStorage.getItem('sysUserId'),
+        optionId,
+        detail,
+        isCorrect,
+      }
+      dispatch({type: 'question/updateOption', payload, callback});
+    }else{
+
+      // 新增答案
+      this.changeSpinLoading()
+      const callback = (res : any) => {
+        if (res.success) {
+          message.success('添加成功')
+        } else {
+          message.error(res.data)
+        }
+        this.changeSpinLoading()
+      }
+      const payload = {
+        sysUserId: localStorage.getItem('sysUserId'),
+        questionId,
+        detail,
+        isCorrect,
+      }
+      dispatch({type: 'question/addOption', payload, callback});
+    }
+  }
+
+  // 输入框值变化
+  handleInputChange = (e : any, key : string) => {
+    const value = e.target.value
+    if (key === 'topic') {
+      this.setState({topic: value})
+    } else {
+      this.setState({questions: value})
+    }
+  }
 
   render() {
     let {
       loading,
-      answers_1,
-      answers_2,
-      answers_3,
+      answers,
       type,
       isMultipleSelection,
       topic,
@@ -309,16 +378,6 @@ IState > {
       questionId,
       spinLoading
     } = this.state
-
-    let answer = answers_1
-
-    if (isMultipleSelection === 2) {
-      answer = answers_2
-    }
-
-    if (isMultipleSelection === 3) {
-      answer = answers_3
-    }
 
     const {form: {
         getFieldDecorator
@@ -384,7 +443,9 @@ IState > {
                       message: '请输入标题'
                     }
                   ]
-                })(<TextArea placeholder="请输入标题"/>)}
+                })(<TextArea
+                  onChange={e => this.handleInputChange(e, 'topic')}
+                  placeholder="请输入标题"/>)}
               </Col>
               <Col span={12}></Col>
             </Row>
@@ -401,11 +462,13 @@ IState > {
                       message: '请输入问题'
                     }
                   ]
-                })(<TextArea placeholder="请输入标题"/>)}
+                })(<TextArea
+                  onChange={e => this.handleInputChange(e, 'questions')}
+                  placeholder="请输入标题"/>)}
               </Col>
             </Row>
           </FormItem>
-          {answer.map((item : any, index : number) => !item.del
+          {answers.map((item : any, index : number) => !item.del
             ? <FormItem key={index} {...formItemLayout} label="答案">
                 <Row gutter={24}>
                   <Col span={12}>
@@ -418,6 +481,7 @@ IState > {
                         }
                       ]
                     })(<TextArea
+                      disabled={isMultipleSelection === 3}
                       placeholder={`请输入答案`}
                       onChange={(e) => {
                       this.handleChangeAnswer(e, index)
@@ -440,24 +504,29 @@ IState > {
                       }}>正确答案</Radio>
 }
 
-                    {questionId
-                      ? <Fragment>
-                          <a
+                    <Fragment>
+                      {isMultipleSelection !== 3
+                        ? <a
                             style={{
                             marginLeft: 20
                           }}
                             onClick={() => {
-                            this.deleteAnswer(index)
+                            this.handleDeleteOption(index)
                           }}>删除</a>
-                          <a
+                        : null
+}
+
+                      {questionId
+                        ? <a
                             style={{
                             marginLeft: 20
                           }}
                             onClick={() => {
-                            this.updateOption(index)
-                          }}>确认修改</a>
-                        </Fragment>
-                      : null}
+                            this.handleEditOption(index)
+                          }}>{item.id ? '确认修改' : '新增答案'}</a>
+                        : null}
+
+                    </Fragment>
 
                   </Col>
                 </Row>
@@ -467,9 +536,13 @@ IState > {
           <FormItem {...submitFormLayout} style={{
             marginTop: 32
           }}>
-            <Button onClick={() => this.handleAddAnswer()}>
-              新增答案
-            </Button>
+            {isMultipleSelection !== 3
+              ? <Button onClick={() => this.handleAddAnswer()}>
+                  新增答案
+                </Button>
+              : null
+}
+
           </FormItem>
           <FormItem {...submitFormLayout} style={{
             marginTop: 32
@@ -479,8 +552,10 @@ IState > {
             </Button>
           </FormItem>
         </Form>
-        <div className={spinLoading ? 'spin' : 'spin-none'}>
-        <Spin size="large" />
+        <div className={spinLoading
+          ? 'spin'
+          : 'spin-none'}>
+          <Spin size="large"/>
         </div>
       </Card>
     );

@@ -9,8 +9,41 @@ export async function add(params: object): Promise<any> {
   });
 }
 
+export async function update(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/updQuestion', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
+
+export async function updateOption(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/updOption', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
+export async function addOption(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/addOption', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
 export async function del(params: object): Promise<any> {
   return request(API_URL + '/admin/sys/delQuestion', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
+export async function delOption(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/delOption', {
     method: 'POST',
     requestType: 'form',
     data: params,

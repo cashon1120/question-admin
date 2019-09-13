@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 import {  Effect } from 'dva';
-import { fetch, add, detail, del } from '@/services/question';
+import { fetch, add, update, detail, del, delOption, updateOption, addOption } from '@/services/question';
 
 export interface QuestionModelState {
   data: any;
@@ -14,6 +14,10 @@ export interface ModelType {
     add: Effect;
     del: Effect;
     detail: Effect;
+    update: Effect
+    delOption: Effect
+    updateOption: Effect
+    addOption: Effect
   };
   reducers: {
     saveData: Reducer<{}>;
@@ -43,8 +47,32 @@ const LoginModel: ModelType = {
         callback(response);
       }
     },
+    *update({ payload, callback }, { call }) {
+      const response = yield call(update, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *updateOption({ payload, callback }, { call }) {
+      const response = yield call(updateOption, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *addOption({ payload, callback }, { call }) {
+      const response = yield call(addOption, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
     *del({ payload, callback }, { call }) {
       const response = yield call(del, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *delOption({ payload, callback }, { call }) {
+      const response = yield call(delOption, payload);
       if (callback) {
         callback(response);
       }

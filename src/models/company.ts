@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 import {  Effect } from 'dva';
-import { fetch, add, del, update } from '@/services/company';
+import { fetch, add, del, update, setImg } from '@/services/company';
 
 export interface CompanyModelState {
   data: any;
@@ -14,6 +14,7 @@ export interface ModelType {
     add: Effect;
     del:Effect;
     update: Effect;
+    setImg: Effect;
   };
   reducers: {
     saveData: Reducer<{}>;
@@ -39,6 +40,13 @@ const LoginModel: ModelType = {
     },
     *add({ payload, callback }, { call }) {
       const response = yield call(add, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+
+    *setImg({ payload, callback }, { call }) {
+      const response = yield call(setImg, payload);
       if (callback) {
         callback(response);
       }

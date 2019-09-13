@@ -6,6 +6,8 @@ import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
 import AddNew from './AddNew'
+import ImageDetail from '../../components/ImageDetail'
+
 const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
@@ -16,6 +18,8 @@ interface IProps extends ConnectProps {
 interface IState {
   loading : boolean;
   modalVisible : boolean;
+  imgDetailVisible : boolean;
+  imgUrl : string;
   modalData : any,
   selectedRowKeys : any[];
   searchData : {
@@ -33,6 +37,8 @@ IState > {
     loading: false,
     modalVisible: false,
     modalData: {},
+    imgDetailVisible: false,
+    imgUrl: '',
     selectedRowKeys: [],
     searchData: {
       name: '',
@@ -55,13 +61,31 @@ IState > {
       title: '联系电话',
       dataIndex: 'phone',
       key: 'phone'
-    },{
+    }, {
+      title: '考试二维码',
+      key: 'img_url',
+      render: (record : any) => (
+        <div>
+          <img
+            style={{
+            width: 80,
+            height: 80
+          }}
+            src={record.img_url}
+            onClick={() => {
+            this.handleShowImgDetail(record.img_url)
+          }}
+            alt=""/>
+        </div>
+      )
+    }, {
       title: '操作',
       width: 200,
       render: (record : any) => (
         <div className="table-operate">
           <a onClick={() => this.handleEdit(record)}>修改</a>
           <a onClick={() => this.handleDel(record.staffId)}>删除</a>
+          <a onClick={() => this.handleSetImg(record.staffId)}>生成二维码</a>
         </div>
       )
     }
@@ -77,6 +101,40 @@ IState > {
       modalVisible: !modalVisible
     });
   };
+
+  handleSetImg = (id : number) => {
+    const {dispatch} = this.props;
+    const callback = (res : any) => {
+      if (res.success) {
+        message.success('操作成功')
+        this.initData()
+      } else {
+        message.error(res.data)
+      }
+    }
+    if (dispatch) {
+      dispatch({
+        type: 'staff/setImg',
+        payload: {
+          staffId: id
+        },
+        callback
+      });
+    }
+  }
+
+  // 显示二维码大图
+  handleShowImgDetail = (imgUrl?: string) => {
+    const {imgDetailVisible} = this.state
+    if (imgDetailVisible) {
+      this.setState({imgDetailVisible: false})
+    } else {
+      if (imgUrl) {
+        this.setState({imgUrl, imgDetailVisible: true})
+      }
+    }
+
+  }
 
   // 加载数据
   initData(params?: any) {
@@ -196,7 +254,7 @@ IState > {
 
   render() {
     const {data, loading} = this.props;
-    const {modalVisible, modalData} = this.state
+    const {modalVisible, modalData, imgUrl, imgDetailVisible} = this.state
     return (
       <Card>
         <div className="flex-container">
@@ -221,6 +279,11 @@ IState > {
           modalData={modalData}
           onCancel={this.handleTriggerModal}
           onOk={this.handleSubmitModal}/>
+        <ImageDetail
+          imgUrl={imgUrl}
+          visible={imgDetailVisible}
+          onCancel={this.handleShowImgDetail}/>
+
       </Card>
     );
   }

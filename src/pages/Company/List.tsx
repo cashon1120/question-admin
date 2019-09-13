@@ -6,6 +6,7 @@ import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
 import AddNew from './AddNew'
+import ImageDetail from '../../components/ImageDetail'
 const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
@@ -16,6 +17,8 @@ interface IProps extends ConnectProps {
 interface IState {
   loading : boolean;
   modalVisible : boolean;
+  imgDetailVisible : boolean;
+  imgUrl : string;
   modalData : any,
   selectedRowKeys : any[];
   searchData : {
@@ -32,6 +35,8 @@ IState > {
   state = {
     loading: false,
     modalVisible: false,
+    imgDetailVisible: false,
+    imgUrl: '',
     modalData: {},
     selectedRowKeys: [],
     searchData: {
@@ -56,12 +61,30 @@ IState > {
       dataIndex: 'phone',
       key: 'phone'
     }, {
+      title: '考试二维码',
+      key: 'ks_img_url',
+      render: (record : any) => (
+        <div>
+          <img
+            style={{
+            width: 80,
+            height: 80
+          }}
+            src={record.ks_img_url}
+            onClick={() => {
+            this.handleShowImgDetail(record.ks_img_url)
+          }}
+            alt=""/>
+        </div>
+      )
+    }, {
       title: '操作',
       width: 200,
       render: (record : any) => (
         <div className="table-operate">
           <a onClick={() => this.handleEdit(record)}>修改</a>
           <a onClick={() => this.handleDel(record.id)}>删除</a>
+          <a onClick={() => this.handleSetImg(record.id)}>生成二维码</a>
         </div>
       )
     }
@@ -77,6 +100,40 @@ IState > {
       modalVisible: !modalVisible
     });
   };
+
+  handleSetImg = (id : number) => {
+    const {dispatch} = this.props;
+    const callback = (res : any) => {
+      if (res.success) {
+        message.success('操作成功')
+        this.initData()
+      } else {
+        message.error(res.data)
+      }
+    }
+    if (dispatch) {
+      dispatch({
+        type: 'company/setImg',
+        payload: {
+          sysUserId: id
+        },
+        callback
+      });
+    }
+  }
+
+  // 显示二维码大图
+  handleShowImgDetail = (imgUrl?: string) => {
+    const {imgDetailVisible} = this.state
+    if (imgDetailVisible) {
+      this.setState({imgDetailVisible: false})
+    } else {
+      if (imgUrl) {
+        this.setState({imgUrl, imgDetailVisible: true})
+      }
+    }
+
+  }
 
   // 加载数据
   initData(params?: any) {
@@ -193,9 +250,39 @@ IState > {
     this.handleTriggerModal();
   };
 
+  handleSaveImg = () => {
+    var image = new Image()
+    image.setAttribute("crossOrigin", 'Anonymous')
+    image.src = 'http://ymhx.f3322.net:8123/uploads/images/19-08-22/602254cfa30f4ee28c5d6a4f75ce5' +
+        '862.png';
+
+    image.onload = function () {
+      var canvas = document.createElement('canvas')
+      canvas.width = 300
+      canvas.height = 300
+
+      var context = canvas.getContext('2d')
+      if (context) {
+        context.drawImage(image, 0, 0, 300, 300)
+        var url = canvas.toDataURL('image/jpeg')
+        // 生成一个a元素
+        var a = document.createElement('a')
+        // 创建一个单击事件
+        var event = new MouseEvent('click')
+
+        // 将a的download属性设置为我们想要下载的图片名称，若name不存在则使用‘下载图片名称’作为默认名称
+        a.download = name || '下载图片名称'
+        // 将生成的URL设置为a.href属性
+        a.href = url
+        // 触发a的单击事件
+        a.dispatchEvent(event)
+      }
+    }
+  }
+
   render() {
     const {data, loading} = this.props;
-    const {modalVisible, modalData} = this.state
+    const {modalVisible, modalData, imgUrl, imgDetailVisible} = this.state
     return (
       <Card>
         <div className="flex-container">
@@ -220,6 +307,7 @@ IState > {
           modalData={modalData}
           onCancel={this.handleTriggerModal}
           onOk={this.handleSubmitModal}/>
+        <ImageDetail imgUrl={imgUrl} visible={imgDetailVisible} onCancel={this.handleShowImgDetail}/>
       </Card>
     );
   }

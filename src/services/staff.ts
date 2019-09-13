@@ -17,6 +17,14 @@ export async function add(params: object): Promise<any> {
   });
 }
 
+export async function setImg(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/setImgUrl', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
 export async function update(params: object): Promise<any> {
   return request(API_URL + '/admin/sys/updStaff', {
     method: 'POST',
