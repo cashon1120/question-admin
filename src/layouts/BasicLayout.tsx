@@ -50,18 +50,17 @@ const BasicLayout : React.FC < BasicLayoutProps > = props => {
   /**
    * constructor
    */
-  const userId = localStorage.getItem('userid')
+  const userId = localStorage.getItem('sysUserId')
   if (userId) {
     useEffect(() => {
       if (dispatch) {
-        dispatch({type: 'user/fetchCurrent'});
-        dispatch({type: 'settings/getSetting'});
+        // dispatch({type: 'user/fetchCurrent'});
+        // dispatch({type: 'settings/getSetting'});
       }
     }, []);
   } else {
-    window.location.href = '/login'
+    window.location.href = '/dist/#/login'
   }
-
   /**
    * init variables
    */

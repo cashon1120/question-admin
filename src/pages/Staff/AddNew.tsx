@@ -4,6 +4,8 @@ import {Dispatch} from 'redux';
 import {ConnectState} from '../../models/connect';
 import ModalFrom from '@/components/ModalForm';
 import {message} from 'antd';
+import moment from 'moment';
+import {getAuthority} from '../../utils/authority';
 
 interface IProps {
   modalVisible : boolean;
@@ -18,27 +20,44 @@ interface IProps {
 
 interface IState {
   confirmLoading : boolean;
+  companyData : any[],
+  allCompanyData : any[]
 }
 
 class AddCompany extends Component < IProps,
 IState > {
   state = {
-    confirmLoading: false
+    confirmLoading: false,
+    companyData: [],
+    allCompanyData: []
   };
 
   componentDidMount() {
-    const {companyData, dispatch} = this.props
-    if (companyData.length === 0) {
+    if (getAuthority()[0] === 'superAdmin') {
+      const {dispatch} = this.props
+      const callback = (res : any) => {
+        let companyData : any[] = []
+        res
+          .data
+          .forEach((item : any) => {
+            companyData.push({value: item.company_name, id: item.id})
+          })
+        this.setState({
+          companyData,
+          allCompanyData: JSON.parse(JSON.stringify(companyData))
+        })
+      }
       dispatch({
         type: 'staff/fetchCompany',
         payload: {
           sysUserId: localStorage.getItem('sysUserId')
-        }
+        },
+        callback
       });
     }
   }
 
-  handleSubmitModal = (fields : object | undefined) => {
+  handleSubmitModal = (fields : any) => {
     const {onOk, dispatch, modalData: {
         staffId
       }} = this.props;
@@ -47,57 +66,91 @@ IState > {
     const callback = (res : any) => {
       if (res.success) {
         message.success('操作成功')
+        onOk(fields)
       } else {
         message.error(res.data)
       }
       this.setState({confirmLoading: false});
-      onOk(fields)
-    };
 
+    };
+    const startTime1 = moment(fields.time1[0]).format('YYYY-MM-DD')
+    const endTime1 = moment(fields.time1[1]).format('YYYY-MM-DD')
+    const startTime2 = moment(fields.time2[0]).format('YYYY-MM-DD')
+    const endTime2 = moment(fields.time2[1]).format('YYYY-MM-DD')
+    delete fields.time1
+    delete fields.time2
     const type = staffId
       ? 'staff/update'
       : 'staff/add'
     const payload = staffId
       ? {
         staffId,
-        ...fields
+        ...fields,
+        zpStartTime: startTime1,
+        zpEndTime: endTime1,
+        ksStartTime: startTime2,
+        ksEndTime: endTime2
       }
       : {
         sysUserId: localStorage.getItem('sysUserId'),
-        ...fields
+        ...fields,
+        zpStartTime: startTime1,
+        zpEndTime: endTime1,
+        ksStartTime: startTime2,
+        ksEndTime: endTime2
       }
     dispatch({type, payload, callback});
   };
 
+  handleSearch = (value : any) => {
+    const {allCompanyData} = this.state
+    let companyData = allCompanyData.filter((item : any) => {
+      // console.log(item.value.includes(value))
+      return item
+        .value
+        .includes(value)
+    })
+    this.setState({companyData})
+  }
+
   modalFromColumns() {
     const {
-      companyData,
       modalData: {
         name,
         phone,
+        address,
+        ks_address,
+        zp_start_time,
+        zp_end_time,
+        ks_start_time,
+        ks_end_time,
         sys_user_id,
         staffId
       }
     } = this.props;
-    let dataSource : any[] = []
-    if (companyData) {
-      companyData.forEach((item : any) => {
-        dataSource.push({value: item.company_name, id: item.id})
-      })
-    }
 
+    const {companyData} = this.state
     const sysUserId = localStorage.getItem('sysUserId')
+    const todayDate = new Date();
+    todayDate.setTime(todayDate.getTime())
+    const today = todayDate.getFullYear() + "-" + (todayDate.getMonth() + 1) + "-" + todayDate.getDate();
+
+    const tomorrowDate = new Date();
+    tomorrowDate.setTime(tomorrowDate.getTime() + 24 * 60 * 60 * 1000);
+    const tomorrow = tomorrowDate.getFullYear() + "-" + (tomorrowDate.getMonth() + 1) + "-" + tomorrowDate.getDate();
+
     let companySelect : any = {}
     if (sysUserId === '1' && !staffId) {
       companySelect = {
         title: '所属公司',
         dataIndex: 'addUserId',
-        componentType: 'Select',
+        componentType: 'SelectSearch',
         initialValue: sys_user_id,
-        dataSource,
+        dataSource: companyData,
         requiredMessage: '请选择所属公司',
         required: true,
-        placeholder: '请选择所属公司'
+        placeholder: '请选择所属公司',
+        handleSearch: this.handleSearch
       }
     } else {
       companySelect = null
@@ -119,6 +172,44 @@ IState > {
         requiredMessage: '请输入联系电话',
         required: true,
         placeholder: '请输入联系电话'
+      }, {
+        title: '会场',
+        dataIndex: 'address',
+        componentType: 'Input',
+        initialValue: address,
+        requiredMessage: '请输入会场',
+        required: true,
+        placeholder: '请输入会场'
+      }, {
+        title: '考试地址',
+        dataIndex: 'ksAddress',
+        componentType: 'Input',
+        initialValue: ks_address,
+        requiredMessage: '请输入考试地址',
+        required: true,
+        placeholder: '请输入考试地址'
+      }, {
+        title: '招聘时间',
+        dataIndex: 'time1',
+        componentType: 'RangePicker',
+        initialValue: [
+          moment(zp_start_time || today, 'YYYY-MM-DD'),
+          moment(zp_end_time || tomorrow, 'YYYY-MM-DD')
+        ],
+        requiredMessage: '请输入考试地址',
+        required: true,
+        placeholder: '请输入考试地址'
+      }, {
+        title: '考试时间',
+        dataIndex: 'time2',
+        componentType: 'RangePicker',
+        initialValue: [
+          moment(ks_start_time || today, 'YYYY/MM/DD'),
+          moment(ks_end_time || tomorrow, 'YYYY-MM-DD')
+        ],
+        requiredMessage: '请输入考试地址',
+        required: true,
+        placeholder: '请输入考试地址'
       },
       companySelect
     ];

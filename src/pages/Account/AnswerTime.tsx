@@ -44,7 +44,6 @@ IState > {
     this.setState({spinLoading: true})
     const {dispatch} = this.props
     const callback = (res : any) => {
-      console.log(res)
       this.setState({spinLoading: false})
       if (res.success) {
         this.setState({answerTime: res.data[0].value})

@@ -17,6 +17,14 @@ export async function update(params: object): Promise<any> {
   });
 }
 
+export async function importExcel(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/exportInExcel', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
 
 export async function updateOption(params: object): Promise<any> {
   return request(API_URL + '/admin/sys/updOption', {

@@ -86,6 +86,9 @@ export default {
   targets: {
     ie: 11,
   },
+  base:'/dist/',
+  publicPath:'/dist/',
+  history: 'hash',
   devtool: isAntDesignProPreview ? 'source-map' : false,
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
@@ -106,8 +109,32 @@ export default {
       component: '../layouts/BasicLayout',
       routes: [
         {
+          path: '/question',
+          name: 'question',
+          icon: 'file-unknown',
+          authority: ['superAdmin'],
+          routes: [
+            {
+              path: '/question/list',
+              name: 'list',
+              component: './Question/List',
+            },
+            {
+              path: '/question/add',
+              name: 'add',
+              component: './Question/Add',
+            },
+            {
+              path: '/question/detail/:id?',
+              name: 'detail',
+              component: './Question/Add',
+              hideInMenu: true
+            },
+          ],
+        },
+        {
           path: '/',
-          redirect: '/userInfo/list',
+          component: './Home/Home',
         },
         {
           path: '/userInfo/list',
@@ -150,6 +177,7 @@ export default {
           path:'/company',
           name: 'company',
           icon: 'gold',
+          authority: ['superAdmin'],
           component: './Company/List'
         },
         {
@@ -158,59 +186,35 @@ export default {
           icon: 'user',
           component: './Staff/List'
         },
-        {
-          path: '/question',
-          name: 'question',
-          icon: 'file-unknown',
-          authority: ['admin'],
-          routes: [
-            {
-              path: '/question/list',
-              name: 'list',
-              component: './Question/List',
-            },
-            {
-              path: '/question/add',
-              name: 'add',
-              component: './Question/Add',
-            },
-            {
-              path: '/question/detail/:id?',
-              name: 'detail',
-              component: './Question/Add',
-              hideInMenu: true
-            },
-          ],
-        },
-        {
-          path: '/qcode',
-          name: 'qcode',
-          icon: 'code',
-          // authority: ['admin'],
-          routes: [
-            {
-              path: '/qcode/enroll',
-              name: 'enroll',
-              component: './Qcode/Enroll',
-            },
-            {
-              path: '/qcode/Examination',
-              name: 'examination',
-              component: './Qcode/Examination',
-            },
-            {
-              path: '/qcode/:type',
-              name: 'qcodeType',
-              component: './Qcode/Index',
-              hideInMenu: true
-            },
-          ],
-        },
+        // {
+        //   path: '/qcode',
+        //   name: 'qcode',
+        //   icon: 'code',
+        //   authority: ['admin'],
+        //   routes: [
+        //     {
+        //       path: '/qcode/enroll',
+        //       name: 'enroll',
+        //       component: './Qcode/Enroll',
+        //     },
+        //     {
+        //       path: '/qcode/Examination',
+        //       name: 'examination',
+        //       component: './Qcode/Examination',
+        //     },
+        //     {
+        //       path: '/qcode/:type',
+        //       name: 'qcodeType',
+        //       component: './Qcode/Index',
+        //       hideInMenu: true
+        //     },
+        //   ],
+        // },
         {
           path: '/account',
           name: 'account',
           icon: 'team',
-          // authority: ['admin'],
+          authority: ['superAdmin'],
           routes: [
             {
               path: '/account/answerTime',

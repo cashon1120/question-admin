@@ -38,7 +38,6 @@ class AddCompany extends Component<IProps, IState> {
       this.setState({ confirmLoading: false });
       onOk(fields)
     };
-    console.log(id)
     const type = id ? 'company/update' : 'company/add'
     const payload = id ? {
       sysUserId: localStorage.getItem('sysUserId'),

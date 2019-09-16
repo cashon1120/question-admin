@@ -7,6 +7,8 @@ import {PageHeaderWrapper} from '@ant-design/pro-layout';
 import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
+import {EDUCATION_ARR, MAJOR_ARR} from '../../../public/config'
+import moment from 'moment';
 const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
@@ -51,17 +53,49 @@ IState > {
       dataIndex: 'name',
       key: 'name'
     }, {
-      title: '投递公司',
-      dataIndex: 'company_name',
-      key: 'company_name'
+      title: '性别',
+      dataIndex: 'sex',
+      key: 'sex',
+      render: (sex: number) => <span>{sex===1 ? '女': sex=== 0 ? '男' : '未知'}</span>
+    },  {
+      title: '出生年月',
+      dataIndex: 'birth_time',
+      key: 'birth_time'
+    }, 
+    {
+      title: '预计毕业时间',
+      dataIndex: 'graduation_time',
+      key: 'graduation_time'
+    },{
+      title: '学历',
+      dataIndex: 'education',
+      key: 'education'
     }, {
-      title: '开始时间',
-      dataIndex: 'start_time',
-      key: 'start_time'
-    },, {
-      title: '结束时间',
-      dataIndex: 'end_time',
-      key: 'end_time'
+      title: '专业名称',
+      dataIndex: 'profession_name',
+      key: 'profession_name',
+    },{
+      title: '专业分类',
+      dataIndex: 'profession_category',
+      key: 'profession_category',
+    },{
+      title: '毕业院校',
+      dataIndex: 'graduated_school',
+      key: 'graduated_school'
+    }, {
+      title: '联系电话',
+      dataIndex: 'phone',
+      key: 'phone',
+    }, 
+    {
+      title: '考试地址',
+      dataIndex: 'ks_address',
+      key: 'ks_address',
+    },
+    {
+      title: '考试时间',
+      key: 'ksTime',
+      render: (record: any) => <span>{record.start_time}至<br/>{record.end_time}</span>
     }, {
       title: '得分',
       dataIndex: 'score',
@@ -153,6 +187,28 @@ IState > {
         dataIndex: 'name',
         componentType: 'Input'
       }, {
+        title: '学历',
+        dataIndex: 'education',
+        componentType: 'Select',
+        dataSource: EDUCATION_ARR
+      },{
+        title: '专业分类',
+        dataIndex: 'professionCategory',
+        componentType: 'Select',
+        dataSource: MAJOR_ARR
+      },{
+        title: '毕业院校',
+        dataIndex: 'graduatedSchool',
+        componentType: 'Input'
+      },{
+        title: '招聘会场',
+        dataIndex: 'address',
+        componentType: 'Input'
+      },{
+        title: '时间',
+        dataIndex: 'times',
+        componentType: 'RangePicker'
+      },{
         title: '状态',
         dataIndex: 'state',
         componentType: 'Select',
@@ -188,11 +244,19 @@ IState > {
     if (values.score) {
       score = `${values.score.start}a${values.score.end}`
     }
+    let startTime: string | undefined = undefined
+    let endTime: string | undefined = undefined
+    if(values.times){
+      startTime = moment(values.times[0]).format('YYYY-MM-DD')
+      endTime = moment(values.times[1]).format('YYYY-MM-DD')
+  }
+    delete values.times
     this.setState({
       searchData: {
         ...searchData,
-        name: values.name,
-        state: values.state,
+        ...values,
+        startTime,
+        endTime,
         score
       }
     }, () => {

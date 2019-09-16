@@ -7,6 +7,7 @@ import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
 import AddNew from './AddNew'
 import ImageDetail from '../../components/ImageDetail'
+import {getAuthority} from '../../utils/authority';
 const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
@@ -61,11 +62,13 @@ IState > {
       dataIndex: 'phone',
       key: 'phone'
     }, {
-      title: '考试二维码',
+      title: getAuthority()[0] !== 'superAdmin'
+        ? '二维码'
+        : '',
       key: 'ks_img_url',
-      render: (record : any) => (
-        <div>
-          <img
+      render: (record : any) => {
+        if (getAuthority()[0] !== 'superAdmin') {
+          return <img
             style={{
             width: 80,
             height: 80
@@ -75,16 +78,21 @@ IState > {
             this.handleShowImgDetail(record.ks_img_url)
           }}
             alt=""/>
-        </div>
-      )
-    }, {
+        }
+        return null
+      }
+    },{
       title: '操作',
-      width: 200,
+      width: 300,
       render: (record : any) => (
         <div className="table-operate">
           <a onClick={() => this.handleEdit(record)}>修改</a>
           <a onClick={() => this.handleDel(record.id)}>删除</a>
-          <a onClick={() => this.handleSetImg(record.id)}>生成二维码</a>
+          {getAuthority()[0] !== 'superAdmin'
+            ? <a onClick={() => this.handleSetImg(record.id)}>生成二维码</a>
+            : null
+}
+
         </div>
       )
     }
@@ -307,7 +315,10 @@ IState > {
           modalData={modalData}
           onCancel={this.handleTriggerModal}
           onOk={this.handleSubmitModal}/>
-        <ImageDetail imgUrl={imgUrl} visible={imgDetailVisible} onCancel={this.handleShowImgDetail}/>
+        <ImageDetail
+          imgUrl={imgUrl}
+          visible={imgDetailVisible}
+          onCancel={this.handleShowImgDetail}/>
       </Card>
     );
   }

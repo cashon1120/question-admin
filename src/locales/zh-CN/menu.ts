@@ -10,7 +10,7 @@ export default {
 
   'menu.company': '公司管理',
 
-  'menu.staff': '员工管理',
+  'menu.staff': '地市公司',
 
   'menu.report': '考试成绩查询',
   'menu.report.list': '考试成绩查询',

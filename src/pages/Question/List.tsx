@@ -205,6 +205,49 @@ IState > {
       }
     });
   }
+  uploadIfle() {
+    if (this.refs.fileInput) {
+      this
+        .refs
+        .fileInput
+        .click()
+    }
+  }
+
+  handleChange(e: any) {
+    const {files} = e.target
+    if (files.length <= 0) 
+      return
+    let accept = '.xls, .xlsx, .xlsm'
+    const {dispatch} = this.props
+    const file = files[0]
+    const temp = file
+      .name
+      .split('.')
+     
+    const fileType = temp[temp.length - 1]
+    if (!accept.includes(fileType)) {
+      message.error(`请选择正确的文件格式${accept}`)
+      return
+    }
+    const callback = (res: any) => {
+     if(res.success){
+       message.success('导入成功')
+     }else{
+       message.error('导入失败')
+     }
+    }
+    const formFile = new FormData();
+    formFile.append('file', file);
+    
+    if (dispatch) {
+      dispatch({
+        type: 'question/importExcel',
+        payload: formFile,
+        callback
+      });
+    }
+  }
 
   render() {
     const {data, loading} = this.props;
@@ -218,9 +261,17 @@ IState > {
               handleFormReset={this.handleFormReset}/>
           </div>
           <div>
-            <Link to='/question/add'>
-              <Button type="primary">新增题库</Button>
-            </Link>
+            <a onClick={() => this.uploadIfle()}>
+              <input
+                accept=".xls, .xlsx, .xlsm"
+                onChange={(e) => this.handleChange(e)}
+                ref="fileInput"
+                style={{
+                display: 'none'
+              }}
+                type="file"/>
+              <Button type="primary">导入题库</Button>
+            </a>
           </div>
         </div>
         <StandardTable

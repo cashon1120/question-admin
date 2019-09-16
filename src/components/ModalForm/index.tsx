@@ -140,7 +140,8 @@ class ModalFrom extends Component<FormProps, {}> {
               item.componentType === 'Upload' ||
               item.componentType === 'AreaCascader' ||
               // item.componentType === 'InputNumber' ||
-              item.componentType === 'Cascader'
+              item.componentType === 'Cascader' || 
+              item.componentType === 'SelectSearch'
             ) {
               // 这些类型的规则如果加了 min 和 validator 要出问题...
               rulesObj = [
@@ -223,7 +224,36 @@ class ModalFrom extends Component<FormProps, {}> {
                             ))}
                           </Select>
                         );
-                      } else if (fItem.componentType === 'DatePicker') {
+                      } else if(fItem.componentType === 'SelectSearch'){
+                        componentTem = (
+                          <Select
+                            showSearch
+                            style={{ width: '100%' }}
+                            mode={fItem.multiple ? 'multiple' : ''}
+                            placeholder={fItem.placeholder ? fItem.placeholder : '请选择'}
+                            className={fItem.childclassName}
+                            filterOption={false}
+                            disabled={fItem.disabled}
+                            onSearch={fItem.handleSearch}
+                            onChange={(text, e) => {
+                              if (fItem.validatorSelect) {
+                                fItem.handleChange(text, e, form);
+                              } else if (fItem.handleChange) {
+                                fItem.handleChange(text, e);
+                              }
+                            }}
+                          >
+                            {fItem.dataSource.map((selData: any) => (
+                              <Option
+                                key={`selectIndex${selData.value || selData.id}`}
+                                value={selData.id || selData.value}
+                              >
+                                {selData.value || (fItem.selectName && selData[fItem.selectName])}
+                              </Option>
+                            ))}
+                          </Select>
+                        );
+                      }else if (fItem.componentType === 'DatePicker') {
                         const formatRangePicker: any = {};
                         if (fItem.showTime) {
                           formatRangePicker.showTime = fItem.showTime;
@@ -234,7 +264,7 @@ class ModalFrom extends Component<FormProps, {}> {
                         componentTem = (
                           <DatePicker
                             style={{ width: '100%' }}
-                            placeholder=""
+                            placeholder="请选择"
                             disabled={fItem.disabled}
                             {...formatRangePicker}
                           />
@@ -250,7 +280,7 @@ class ModalFrom extends Component<FormProps, {}> {
                         componentTem = (
                           <RangePicker
                             style={{ width: '100%' }}
-                            placeholder=""
+                            placeholder={["请选择时间","请选择时间"]}
                             disabled={fItem.disabled}
                             {...formatRangePicker}
                           />

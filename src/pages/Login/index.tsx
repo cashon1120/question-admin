@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { setAuthority } from '../../utils/authority';
-import { Form, Icon, Input, Button, Checkbox, Row, Col, message } from 'antd';
+import { Form, Icon, Input, Button,  Row, Col, message } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
+import {reloadAuthorized } from '../../utils/Authorized'
 import { routerRedux } from 'dva/router';
+
 import styles from './style.less';
 
 interface FormProps extends FormComponentProps {
@@ -19,13 +21,19 @@ class Login extends Component<FormProps, {}> {
   handleSubmit = (e: React.FormEvent) => {
     const { dispatch, form } = this.props;
     const callback = (res: any) => {
-      if (res.success) {
-        localStorage.setItem('userid', '1')
-        localStorage.setItem('sysUserId', '1')
-        setAuthority('admin');
+      if (res.success && res.data) {
+        if(res.data.isSuper === 1){
+          setAuthority('superAdmin');
+        }else{
+          setAuthority('sysUser');
+        }
+        reloadAuthorized();
+        localStorage.setItem('sysUserId', res.data.sysUserId)
+        localStorage.setItem('userName', res.data.companyName)
         dispatch(routerRedux.push({ pathname: '/' }));
+        
       } else {
-        message.error(res.msg);
+        message.error(res.data);
       }
       this.setState({
         loading: false,
@@ -52,7 +60,7 @@ class Login extends Component<FormProps, {}> {
         <h2>用户登录</h2>
         <Form onSubmit={this.handleSubmit}>
           <Form.Item>
-            {getFieldDecorator('userName', {
+            {getFieldDecorator('phone', {
               rules: [
                 {
                   required: true,
@@ -64,7 +72,7 @@ class Login extends Component<FormProps, {}> {
           <Form.Item>
             <Row gutter={8}>
               <Col span={16}>
-                {getFieldDecorator('code', {
+                {getFieldDecorator('verificationCode', {
                   rules: [
                     {
                       required: true,
@@ -85,12 +93,12 @@ class Login extends Component<FormProps, {}> {
             </Row>
           </Form.Item>
 
-          <Form.Item>
+          {/* <Form.Item>
             {getFieldDecorator('remember', {
               valuePropName: 'checked',
               initialValue: true,
             })(<Checkbox>记住登录</Checkbox>)}
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item>
             <Button
               style={{

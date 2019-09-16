@@ -16,6 +16,14 @@ export async function exportFile(params: object): Promise<any> {
   });
 }
 
+export async function reCheckOut(params: object): Promise<any> {
+  return request(API_URL + '/admin/sys/deliveryAgain', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
 export async function fetch(params: object): Promise<{}> {
   return request(API_URL + '/admin/sys/getDeliveryList', {
     method: 'POST',

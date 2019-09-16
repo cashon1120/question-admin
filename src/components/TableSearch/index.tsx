@@ -174,7 +174,7 @@ class TableSearch extends PureComponent<FormProps, {}> {
                         componentTem = (
                           <DatePicker
                             style={{ width: '100%' }}
-                            placeholder=""
+                            placeholder="请选择"
                             format={dateFormat}
                           />
                         );
@@ -285,7 +285,6 @@ class TableSearch extends PureComponent<FormProps, {}> {
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      console.log(fieldsValue)
       const values = {
         ...fieldsValue,
         // updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),

@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import {Card, message, Modal} from 'antd';
+import {Card, message, Modal, Button} from 'antd';
 import {connect} from 'dva';
 import 'antd/dist/antd.css';
 import Link from 'umi/link';
 import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
-import { setEnglishLevel } from '../../utils/utils'
-import {EDUCATION_ARR} from '../../../public/config'
+import {EDUCATION_ARR, MAJOR_ARR} from '../../../public/config'
+import moment from 'moment';
 const { confirm } = Modal;
 
 interface IProps extends ConnectProps {
@@ -56,32 +56,54 @@ IState > {
       dataIndex: 'sex',
       key: 'sex',
       render: (sex: number) => <span>{sex===1 ? '女': sex=== 0 ? '男' : '未知'}</span>
-    }, {
+    },  {
+      title: '出生年月',
+      dataIndex: 'birth_time',
+      key: 'birth_time'
+    }, 
+    {
+      title: '预计毕业时间',
+      dataIndex: 'graduation_time',
+      key: 'graduation_time'
+    },{
       title: '学历',
       dataIndex: 'education',
       key: 'education'
     }, {
-      title: '电话',
-      dataIndex: 'phone',
-      key: 'phone'
-    }, {
+      title: '专业名称',
+      dataIndex: 'profession_name',
+      key: 'profession_name',
+    },{
+      title: '专业分类',
+      dataIndex: 'profession_category',
+      key: 'profession_category',
+    },{
       title: '毕业院校',
       dataIndex: 'graduated_school',
       key: 'graduated_school'
     }, {
-      title: '专业方向',
-      dataIndex: 'profession_category',
-      key: 'profession_category'
-    }, {
-      title: '英语技能',
-      dataIndex: 'english_level',
-      key: 'english_level',
-      render: (english_level: number) => <span>{setEnglishLevel(english_level)}</span>
-    }, {
-      title: '审核状态',
-      dataIndex: 'status',
-      key: 'status'
-    }, {
+      title: '联系电话',
+      dataIndex: 'phone',
+      key: 'phone',
+    }, 
+    {
+      title: '招聘会场',
+      dataIndex: 'jobAddress',
+      key: 'jobAddress',
+    },
+    {
+      title: '会场时间',
+      dataIndex: 'jobTime',
+      key: 'jobTime',
+    },{
+      title: '特长',
+      dataIndex: 'specialty',
+      key: 'specialty',
+    },{
+      title: '备注',
+      dataIndex: 'remark',
+      key: 'remark',
+    },{
       title: '操作',
       render: (record: any) => (
         <div className="table-operate">
@@ -150,14 +172,27 @@ IState > {
         dataIndex: 'name',
         componentType: 'Input'
       }, {
-        title: '电话',
-        dataIndex: 'phone',
-        componentType: 'Input'
-      },, {
         title: '学历',
         dataIndex: 'education',
         componentType: 'Select',
         dataSource: EDUCATION_ARR
+      },{
+        title: '专业分类',
+        dataIndex: 'professionCategory',
+        componentType: 'Select',
+        dataSource: MAJOR_ARR
+      },{
+        title: '毕业院校',
+        dataIndex: 'graduatedSchool',
+        componentType: 'Input'
+      },{
+        title: '招聘会场',
+        dataIndex: 'address',
+        componentType: 'Input'
+      },{
+        title: '时间',
+        dataIndex: 'times',
+        componentType: 'RangePicker'
       }
     ];
     return serarchColumns;
@@ -166,11 +201,19 @@ IState > {
   // 搜索
   handleSearch = (values : any) => {
     const {searchData} = this.state
-
+    let startTime: string | undefined = undefined
+    let endTime: string | undefined = undefined
+    if(values.times){
+      startTime = moment(values.times[0]).format('YYYY-MM-DD')
+      endTime = moment(values.times[1]).format('YYYY-MM-DD')
+  }
+    delete values.times
     this.setState({
       searchData: {
         ...searchData,
-        ...values
+        ...values,
+        startTime,
+        endTime
       }
     }, () => {
       this.initData()
@@ -242,9 +285,9 @@ IState > {
                 handleSearch={this.handleSearch}
                 handleFormReset={this.handleFormReset}/>
             </div>
-            {/* <div>
+            <div>
               <Button type="primary" onClick={this.exportFiel}>导出详情</Button>
-            </div> */}
+            </div>
           </div>
           <StandardTable
             showSelectRow={true}
