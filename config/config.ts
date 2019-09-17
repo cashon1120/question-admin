@@ -86,7 +86,7 @@ export default {
   targets: {
     ie: 11,
   },
-  base:'/dist/',
+  base:'/',
   publicPath:'/dist/',
   history: 'hash',
   devtool: isAntDesignProPreview ? 'source-map' : false,

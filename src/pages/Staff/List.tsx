@@ -186,8 +186,8 @@ IState > {
       width: 250,
       render: (record : any) => (
         <div className="table-operate">
-          <a onClick={() => this.handleSetCode(record, 1)}>生成招聘二维码</a>
-          <a onClick={() => this.handleSetCode(record, 2)}>生成考试二维码</a>
+          <a onClick={() => this.handleSetCode(record, 1)}>生成招聘二维码</a><br/>
+          <a onClick={() => this.handleSetCode(record, 2)}>生成考试二维码</a><br/>
           <a onClick={() => this.handleDel(record.staffId)}>删除</a>
         </div>
       )

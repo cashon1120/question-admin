@@ -88,13 +88,13 @@ IState > {
     }, 
     {
       title: '招聘会场',
-      dataIndex: 'jobAddress',
-      key: 'jobAddress',
+      dataIndex: 'address',
+      key: 'address',
     },
     {
       title: '会场时间',
-      dataIndex: 'jobTime',
-      key: 'jobTime',
+      dataIndex: 'publish_time',
+      key: 'publish_time',
     },{
       title: '特长',
       dataIndex: 'specialty',
@@ -105,6 +105,7 @@ IState > {
       key: 'remark',
     },{
       title: '操作',
+      width: 80,
       render: (record: any) => (
         <div className="table-operate">
           <Link to={`/userInfo/detail/${record.id}`}>详情</Link>
