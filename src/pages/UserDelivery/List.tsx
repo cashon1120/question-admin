@@ -10,7 +10,6 @@ import {ConnectProps, ConnectState} from '@/models/connect';
 import {EDUCATION_ARR, MAJOR_ARR} from '../../../public/config'
 import moment from 'moment';
 
-
 const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
@@ -142,7 +141,7 @@ IState > {
         if (record.is_delivery === 1) {
           return (
             <div className="table-operate">
-              <a onClick={() => this.hadleCheckOut(record.delivery_id, 3)}>通过审核</a>
+              <a onClick={() => this.hadleCheckOut(record.delivery_id, 3)}>通过初审</a>
               <a onClick={() => this.hadleCheckOut(record.delivery_id, 2)}>不通过</a>
             </div>
           )
@@ -221,7 +220,7 @@ IState > {
         dataSource: EDUCATION_ARR
       }, {
         title: '电话',
-        dataIndex: 'phone', 
+        dataIndex: 'phone',
         componentType: 'Input'
       }, {
         title: '专业分类',
@@ -267,12 +266,12 @@ IState > {
   // 搜索
   handleSearch = (values : any) => {
     const {searchData} = this.state
-    let startTime: string | undefined = undefined
-    let endTime: string | undefined = undefined
-    if(values.times){
+    let startTime : string | undefined = undefined
+    let endTime : string | undefined = undefined
+    if (values.times) {
       startTime = moment(values.times[0]).format('YYYY-MM-DD')
       endTime = moment(values.times[1]).format('YYYY-MM-DD')
-  }
+    }
     delete values.times
     this.setState({
       searchData: {
@@ -321,23 +320,35 @@ IState > {
     let info = '审核通过后，考生即可扫描二维码考试，是否通过审核'
     if (type === 2) {
       info = '确定要拒绝通过吗?'
-    }
-    confirm({
-      title: '审核信息',
-      content: info,
-      onOk: () => {
-        if (dispatch) {
-          dispatch({
-            type: 'userDelivery/checkOut',
-            payload: {
-              deliveryId: id,
-              state: type
-            },
-            callback
-          });
+      confirm({
+        title: '审核信息',
+        content: info,
+        onOk: () => {
+          if (dispatch) {
+            dispatch({
+              type: 'userDelivery/checkOut',
+              payload: {
+                deliveryId: id,
+                state: type
+              },
+              callback
+            });
+          }
         }
+      });
+    } else {
+      if (dispatch) {
+        dispatch({
+          type: 'userDelivery/checkOut',
+          payload: {
+            deliveryId: id,
+            state: type
+          },
+          callback
+        });
       }
-    });
+    }
+
   }
 
   hadleReCheckOut = (id : string) => {

@@ -58,30 +58,6 @@ IState > {
       dataIndex: 'company_name',
       key: 'company_name'
     }, {
-      title: '联系电话',
-      dataIndex: 'phone',
-      key: 'phone'
-    }, {
-      title: getAuthority()[0] !== 'superAdmin'
-        ? '二维码'
-        : '',
-      key: 'ks_img_url',
-      render: (record : any) => {
-        if (getAuthority()[0] !== 'superAdmin') {
-          return <img
-            style={{
-            width: 80,
-            height: 80
-          }}
-            src={record.ks_img_url}
-            onClick={() => {
-            this.handleShowImgDetail(record.ks_img_url)
-          }}
-            alt=""/>
-        }
-        return null
-      }
-    },{
       title: '操作',
       width: 300,
       render: (record : any) => (

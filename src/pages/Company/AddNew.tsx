@@ -56,7 +56,7 @@ class AddCompany extends Component<IProps, IState> {
 
   modalFromColumns() {
     const {
-      modalData: { company_name, phone },
+      modalData: { company_name },
     } = this.props;
     return [
       {
@@ -67,16 +67,7 @@ class AddCompany extends Component<IProps, IState> {
         requiredMessage: '请输入公司名称',
         required: true,
         placeholder: '请输入公司名称',
-      },
-      {
-        title: '联系电话',
-        dataIndex: 'phone',
-        componentType: 'Input',
-        initialValue: phone,
-        requiredMessage: '请输入联系电话',
-        required: true,
-        placeholder: '请输入联系电话',
-      },
+      }
     ];
   }
 

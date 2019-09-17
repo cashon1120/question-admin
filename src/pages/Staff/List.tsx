@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import {Card, Button, message, Modal} from 'antd';
 import {connect} from 'dva';
 import 'antd/dist/antd.css';
@@ -6,6 +6,7 @@ import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
 import AddNew from './AddNew'
+import EditQCode from './EditQCode'
 import ImageDetail from '../../components/ImageDetail'
 import {getAuthority} from '../../utils/authority';
 
@@ -19,6 +20,8 @@ interface IProps extends ConnectProps {
 interface IState {
   loading : boolean;
   modalVisible : boolean;
+  editVisible : boolean;
+  editType: number;
   showPeopleVisible : boolean;
   imgDetailVisible : boolean;
   imgUrl : string;
@@ -39,6 +42,8 @@ IState > {
   state = {
     loading: false,
     modalVisible: false,
+    editVisible: false,
+    editType: 0,
     modalData: {},
     imgDetailVisible: false,
     showPeopleVisible: false,
@@ -99,9 +104,8 @@ IState > {
       title: '联系电话',
       dataIndex: 'phone',
       key: 'phone'
-    },
+    }
   ]
-
   columns = [
     {
       title: '姓名',
@@ -145,13 +149,13 @@ IState > {
         }
         return null
       }
-    },{
+    }, {
       title: '考试二维码时间',
       key: 'time2',
       render: (record : any) => {
         return <div>{record.ks_start_time}至{record.ks_end_time}</div>
       }
-    },  {
+    }, {
       title: getAuthority()[0] !== 'superAdmin'
         ? '考试二维码'
         : '',
@@ -182,12 +186,34 @@ IState > {
       width: 250,
       render: (record : any) => (
         <div className="table-operate">
+          <a onClick={() => this.handleSetCode(record, 1)}>生成招聘二维码</a>
+          <a onClick={() => this.handleSetCode(record, 2)}>生成考试二维码</a>
+          <a onClick={() => this.handleDel(record.staffId)}>删除</a>
+        </div>
+      )
+    }
+  ];
+
+  columns_admin = [
+    {
+      title: '姓名',
+      dataIndex: 'name',
+      key: 'name'
+    }, {
+      title: '联系电话',
+      dataIndex: 'phone',
+      key: 'phone'
+    }, {
+      title: '所属公司',
+      dataIndex: 'company_name',
+      key: 'company_name'
+    }, {
+      title: '操作',
+      width: 250,
+      render: (record : any) => (
+        <div className="table-operate">
           <a onClick={() => this.handleEdit(record)}>修改</a>
           <a onClick={() => this.handleDel(record.staffId)}>删除</a>
-          {getAuthority()[0] !== 'superAdmin'
-            ? <Fragment><a onClick={() => this.handleSetImg(record.id)}>生成招聘二维码</a><a onClick={() => this.handleSetKsImg(record.id)}>生成考试二维码</a></Fragment>
-            : null
-}
         </div>
       )
     }
@@ -197,11 +223,18 @@ IState > {
     this.initData();
   }
 
-  handleTriggerModal = () => {
-    const {modalVisible} = this.state;
-    this.setState({
-      modalVisible: !modalVisible
-    });
+  handleTriggerModal = (type?: number) => {
+    if (type === 1) {
+      const {editVisible} = this.state;
+      this.setState({
+        editVisible: !editVisible
+      });
+    } else {
+      const {modalVisible} = this.state;
+      this.setState({
+        modalVisible: !modalVisible
+      });
+    }
   };
 
   handleSetKsImg = (id : number) => {
@@ -246,6 +279,16 @@ IState > {
     }
   }
 
+  // 生成二维码
+  handleSetCode = (record: any, type: number) => {
+    this.setState({
+      editVisible: true,
+      editType: type,
+      modalData: {
+        ...record
+      }
+    })
+  }
   // 显示二维码大图
   handleShowImgDetail = (imgUrl?: string) => {
     const {imgDetailVisible} = this.state
@@ -356,6 +399,7 @@ IState > {
     });
   }
 
+  // 修改账号
   handleEdit = (record : any) => {
     this.setState({
       modalData: {
@@ -365,20 +409,27 @@ IState > {
     this.handleTriggerModal()
   }
 
+  // 添加账号
   handleAddNew = () => {
     this.setState({modalData: {}})
     this.handleTriggerModal();
   }
 
-  handleSubmitModal = () => {
+  // 提交
+  handleSubmitModal = (type?: number) => {
     this.initData()
-    this.handleTriggerModal();
+    if(type === 1){
+      this.handleTriggerModal(1);
+    }else{
+      this.handleTriggerModal();
+    }
   };
 
   handleCancel = () => {
     this.setState({showPeopleVisible: false})
   }
 
+  // 显示招聘人员
   handleShowPeople = (id : string) => {
     const {dispatch} = this.props;
 
@@ -404,12 +455,17 @@ IState > {
     const {data, loading} = this.props;
     const {
       modalVisible,
+      editVisible,
+      editType,
       modalData,
       imgUrl,
       imgDetailVisible,
       showPeopleVisible,
       peopleData
     } = this.state
+    const tableColumns = getAuthority()[0] === 'superAdmin'
+      ? this.columns_admin
+      : this.columns
     return (
       <Card>
         <div className="flex-container">
@@ -419,13 +475,16 @@ IState > {
               handleSearch={this.handleSearch}
               handleFormReset={this.handleFormReset}/>
           </div>
-          <div>
-            <Button type="primary" onClick={this.handleAddNew}>新增</Button>
-          </div>
+          {getAuthority()[0] === 'superAdmin'
+            ? <div>
+                <Button type="primary" onClick={this.handleAddNew}>新增</Button>
+              </div>
+            : null
+}
         </div>
         <StandardTable
           rowKey="staffId"
-          columns={this.columns}
+          columns={tableColumns}
           data={data || []}
           loading={loading}
           onChangeCombine={(params : object) => this.initData(params)}/>
@@ -434,6 +493,14 @@ IState > {
           modalData={modalData}
           onCancel={this.handleTriggerModal}
           onOk={this.handleSubmitModal}/>
+
+        <EditQCode
+          editType={editType}
+          modalVisible={editVisible}
+          modalData={modalData}
+          onCancel={() => this.handleTriggerModal(1)}
+          onOk={() => this.handleSubmitModal(1)}/>
+
         <ImageDetail
           imgUrl={imgUrl}
           visible={imgDetailVisible}

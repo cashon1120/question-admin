@@ -184,6 +184,14 @@ export default {
           path:'/staff',
           name: 'staff',
           icon: 'user',
+          authority: ['sysUser'],
+          component: './Staff/List'
+        },
+        {
+          path:'/staff_admin',
+          name: 'staff_admin',
+          authority: ['superAdmin'],
+          icon: 'user',
           component: './Staff/List'
         },
         // {
@@ -221,11 +229,11 @@ export default {
               name: 'setting',
               component: './Account/AnswerTime',
             },
-            {
-              path: '/account/codeTime',
-              name: 'getSetting',
-              component: './Account/CodeTime',
-            },
+            // {
+            //   path: '/account/codeTime',
+            //   name: 'getSetting',
+            //   component: './Account/CodeTime',
+            // },
           ]
         },
         {

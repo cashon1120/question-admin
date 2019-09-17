@@ -6,11 +6,12 @@ export default {
   'menu.userInfo.list': '资料列表',
   'menu.userInfoDetail': '资料详情',
 
-  'menu.userDelivery': '考生审核',
+  'menu.userDelivery': '考生信息审核',
 
   'menu.company': '公司管理',
 
-  'menu.staff': '地市公司',
+  'menu.staff': '生成二维码',
+  'menu.staff_admin': '账号管理',
 
   'menu.report': '考试成绩查询',
   'menu.report.list': '考试成绩查询',
