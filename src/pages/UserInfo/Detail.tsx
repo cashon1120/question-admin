@@ -90,7 +90,7 @@ IState > {
     return (
 
       <Card>
-        <Descriptions title="张三 的资料">
+        <Descriptions title={(userInfo.name || '---') + ' 的资料'}>
           <Descriptions.Item label="姓名">{userInfo.name}</Descriptions.Item>
           <Descriptions.Item label="性别">{userInfo.sex === 1
               ? '女'

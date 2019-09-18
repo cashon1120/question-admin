@@ -104,8 +104,14 @@ IState > {
       title: '会场时间',
       dataIndex: 'publish_time',
       key: 'publish_time'
-    }, {
+    }, 
+    {
+      title: '投递公司',
+      dataIndex: 'company_name',
+      key: 'company_name',
+    },{
       title: '审核状态',
+      width: 100,
       key: 'is_delivery',
       render: (record : any) => {
         let str = ''
@@ -136,7 +142,6 @@ IState > {
       }
     }, {
       title: '操作',
-      width: 250,
       render: (record : any) => {
         if (record.is_delivery === 1) {
           return (
@@ -239,7 +244,7 @@ IState > {
         title: '时间',
         dataIndex: 'times',
         componentType: 'RangePicker'
-      }, {
+      },{
         title: '审核状态',
         dataIndex: 'isDelivery',
         componentType: 'Select',

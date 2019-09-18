@@ -96,28 +96,29 @@ IState > {
     delete fields.time
 
     const type = 'staff/update'
-    let payload = editType === 1
-      ? {
-        zpStartTime: startTime,
-        zpEndTime: endTime
-      }
-      : {
-        ksStartTime: startTime,
-        ksEndTime: endTime
-      }
-    payload = {
+    const params = {
       staffId,
       name: modalData.name,
       phone: modalData.phone,
       ksAddress: modalData.ks_address,
       address: modalData.address,
-      zpStartTime: startTime,
-      zpEndTime: endTime,
-      ksStartTime: startTime,
-      ksEndTime: endTime,
-      ...fields,
-      ...payload
+      zpStartTime: modalData.zp_start_time,
+      zpEndTime: modalData.zp_end_time,
+      ksStartTime: modalData.ks_start_time,
+      ksEndTime: modalData.ks_end_time,
+      ...fields
     }
+    const payload = editType === 1
+      ? {
+        ...params,
+        zpStartTime: startTime,
+        zpEndTime: endTime
+      }
+      : {
+        ...params,
+        ksStartTime: startTime,
+        ksEndTime: endTime
+      }
     dispatch({type, payload, callback});
   };
 
