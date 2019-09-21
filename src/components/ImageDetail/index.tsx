@@ -8,11 +8,12 @@ interface IProps {
 }
 
 class ImageDetail extends Component < IProps, {} > {
+
   handleSaveImg = () => {
+    const {imgUrl} = this.props
     var image = new Image()
     image.setAttribute("crossOrigin", 'Anonymous')
-    image.src = 'http://ymhx.f3322.net:8123/uploads/images/19-08-22/602254cfa30f4ee28c5d6a4f75ce5' +
-        '862.png';
+    image.src = imgUrl;
 
     image.onload = function () {
       var canvas = document.createElement('canvas')
@@ -29,13 +30,25 @@ class ImageDetail extends Component < IProps, {} > {
         var event = new MouseEvent('click')
 
         // 将a的download属性设置为我们想要下载的图片名称，若name不存在则使用‘下载图片名称’作为默认名称
-        a.download = name || '下载图片名称'
+        a.download = name || '二维码'
         // 将生成的URL设置为a.href属性
         a.href = url
         // 触发a的单击事件
         a.dispatchEvent(event)
       }
     }
+  }
+
+  downloadImg = () => {
+    const {imgUrl} = this.props
+    return fetch(imgUrl).then(res => res.blob().then(blob => {
+      let a = document.createElement('a');
+      let url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = '二维码下载';
+      a.click();
+      window.URL.revokeObjectURL(url);
+  }))
   }
 
   handleTriggerModal = () => {
@@ -51,7 +64,7 @@ class ImageDetail extends Component < IProps, {} > {
       <Modal
         title="二维码"
         visible={visible}
-        onOk={this.handleSaveImg}
+        onOk={this.downloadImg}
         onCancel={() => this.handleTriggerModal()}
         okText="保存为图片"
         cancelText="关闭">

@@ -25,6 +25,7 @@ export default {
 
   'menu.account': '系统设置',
   'menu.account.setting': '答题时间',
+  'menu.account.setSmjoin': '扫码进入',
   'menu.account.getSetting': '二维码有效时间',
   'menu.account.list': '账号列表',
   'menu.account.add': '添加账号',

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, message, Modal, Button} from 'antd';
+import {Card, message, Modal} from 'antd';
 import {connect} from 'dva';
 import 'antd/dist/antd.css';
 
@@ -143,21 +143,21 @@ IState > {
     }, {
       title: '操作',
       render: (record : any) => {
+        let compnent: any = ''
         if (record.is_delivery === 1) {
-          return (
+          compnent = 
             <div className="table-operate">
               <a onClick={() => this.hadleCheckOut(record.delivery_id, 3)}>通过初审</a>
               <a onClick={() => this.hadleCheckOut(record.delivery_id, 2)}>不通过</a>
             </div>
-          )
         }
         if (record.is_delivery === 10) {
-          return (
+          compnent = 
             <div className="table-operate">
               <a onClick={() => this.hadleReCheckOut(record.delivery_id)}>复审</a>
             </div>
-          )
         }
+        return compnent
       }
     }
   ];
@@ -250,17 +250,20 @@ IState > {
         componentType: 'Select',
         dataSource: [
           {
-            id: 0,
-            value: '未投递'
-          }, {
             id: 1,
-            value: '待审核'
+            value: '待初审'
           }, {
             id: 2,
-            value: '审核未通过'
+            value: '初审未通过'
           }, {
-            id: 3,
-            value: '审核通过'
+            value: '校园直招',
+            id: 3
+          }, {
+            value: '意向性招聘',
+            id: 4
+          }, {
+            value: '推荐国网考试',
+            id: 5
           }
         ]
       }
@@ -421,10 +424,9 @@ IState > {
             <TableSearch
               columns={this.getSerarchColumns()}
               handleSearch={this.handleSearch}
+              showExportButton={true}
+              exportUrl='outDeliveryList'
               handleFormReset={this.handleFormReset}/>
-          </div>
-          <div>
-            <Button type="primary" onClick={this.exportFiel}>导出详情</Button>
           </div>
         </div>
         <StandardTable

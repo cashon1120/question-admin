@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, message, Modal, Button} from 'antd';
+import {Card, message, Modal} from 'antd';
 import {connect} from 'dva';
 import 'antd/dist/antd.css';
 import Link from 'umi/link';
@@ -284,14 +284,13 @@ IState > {
               <TableSearch
                 columns={this.getSerarchColumns()}
                 handleSearch={this.handleSearch}
+                showExportButton={true}
+                exportUrl='outCandidateList'
                 handleFormReset={this.handleFormReset}/>
-            </div>
-            <div>
-              <Button type="primary" onClick={this.exportFiel}>导出详情</Button>
             </div>
           </div>
           <StandardTable
-            showSelectRow={true}
+            // showSelectRow={true}
             rowKey="id"
             columns={this.columns}
             data={data || []}

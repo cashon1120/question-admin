@@ -56,11 +56,21 @@ const setComputerLevel = (level : number) => {
   return englishLevel
 }
 
+// 验证电话
+const checkPhone = (rule : any, value : any, callback : any) : void => {
+  if (!/^1(3|4|5|7|8)\d{9}$/.test(value)) {
+    callback('手机号码有误，请重填');
+  } else {
+    callback();
+  }
+}
+
 export {
   isAntDesignProOrDev,
   isAntDesignPro,
   isUrl,
   legalStr,
   setEnglishLevel,
-  setComputerLevel
+  setComputerLevel,
+  checkPhone
 };

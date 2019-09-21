@@ -4,7 +4,8 @@ import {
   Button,
   Modal,
   message,
-  Spin
+  Spin,
+  Checkbox
 } from 'antd';
 import {connect} from 'dva';
 import {Dispatch} from 'redux';
@@ -98,19 +99,31 @@ IState > {
     return str
   }
 
+  checkUserSelect = (optionId: string, selected: string) => {
+    const userSelectedOptions = selected.split(',')
+    let checked = false
+    userSelectedOptions.forEach(item => {
+      if(item === optionId){
+        checked = true
+      }
+    })
+    return checked
+  }
+
   render() {
-    const {examList,  spinLoading} = this.state
+    const {examList,  spinLoading } = this.state
     return (
 
       <Card>
         {examList.map((item: any, index:number) => {
           return <div key={item.question_id} className="examlist">
-            <div className={item.score > 0 ? 'right' : ''}>第{index + 1}题: {item.topic},{item.questions}({this.formatType(item.is_multiple_selection)}) [考生得分: {item.score}]</div>
+            <div className={item.score > 0 ? 'right' : ''}>第{index + 1}题: {item.topic},{item.questions}({this.formatType(item.is_multiple_selection)}) <span style={{marginLeft: 10}}>[考生得分: {item.score}]</span></div>
             <ul>
               {item
                 .result
                 .map((result:any, index: number) => <li className={result.isCorrect === '1'? 'correct' : ''} key={result.optionId}>{index+1}: {result.optionDetail}
                 {result.isCorrect === '1' ? ' (正确答案)' : null}
+                {this.checkUserSelect(result.optionId, item.option_id) ? <Checkbox checked disabled={true} style={{marginLeft: 10}}></Checkbox> : null}
                 </li>)}
             </ul>
           </div>

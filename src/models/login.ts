@@ -3,7 +3,7 @@ import { parse, stringify } from 'qs';
 
 import { EffectsCommandMap } from 'dva';
 import { routerRedux } from 'dva/router';
-import { login } from '@/services/login';
+import { login, getCode } from '@/services/login';
 
 export function getPageQuery(): {
   [key: string]: string;
@@ -26,6 +26,7 @@ export interface ModelType {
   effects: {
     logout: Effect;
     submitForm: Effect;
+    getCode: Effect
   };
   reducers: {
     changeLoginStatus: Reducer<{}>;
@@ -57,6 +58,12 @@ const LoginModel: ModelType = {
     },
     *submitForm({ payload, callback }, { call }) {
       const response = yield call(login, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+    *getCode({ payload, callback }, { call }) {
+      const response = yield call(getCode, payload);
       if (callback) {
         callback(response);
       }

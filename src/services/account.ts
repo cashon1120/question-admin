@@ -48,3 +48,19 @@ export async function detail(params: object): Promise<{}> {
     data: params,
   });
 }
+
+export async function getSmJoin(params: object): Promise<{}> {
+  return request(API_URL + '/app/applets/smJoin', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}
+
+export async function setSmJoin(params: object): Promise<{}> {
+  return request(API_URL + '/admin/sys/updSmJoin', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}

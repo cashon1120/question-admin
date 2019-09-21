@@ -229,6 +229,11 @@ export default {
               name: 'setting',
               component: './Account/AnswerTime',
             },
+            {
+              path: '/account/set',
+              name: 'setSmjoin',
+              component: './Account/SetSmjoin',
+            }
             // {
             //   path: '/account/codeTime',
             //   name: 'getSetting',
