@@ -49,7 +49,7 @@ IState > {
       }
     }
     const payload = {
-      sysUserId: localStorage.getItem('sysUserId')
+      sysUserId: sessionStorage.getItem('sysUserId')
     }
     dispatch({type: 'account/getSetting', payload, callback});
   }
@@ -71,7 +71,7 @@ IState > {
         const startTime = moment(values.times[0]).format('YYYY-MM-DD HH:mm:ss')
         const endTime = moment(values.times[1]).format('YYYY-MM-DD HH:mm:ss')
         const payload = {
-          sysUserId: localStorage.getItem('sysUserId'),
+          sysUserId: sessionStorage.getItem('sysUserId'),
           startTime,
           endTime
         }

@@ -213,7 +213,9 @@ IState > {
       render: (record : any) => (
         <div className="table-operate">
           <a onClick={() => this.handleEdit(record)}>修改</a>
-          <a onClick={() => this.handleDel(record.staffId)}>删除</a>
+          {
+            record.sys_user_id !== 1 ? <a onClick={() => this.handleDel(record.staffId)}>删除</a> : null
+          }
         </div>
       )
     }
@@ -327,7 +329,7 @@ IState > {
       dispatch({
         type: 'staff/fetch',
         payload: {
-          sysUserId: localStorage.getItem('sysUserId'),
+          sysUserId: sessionStorage.getItem('sysUserId'),
           ...searchParams,
           ...pageInfo,
           ...params
@@ -389,7 +391,7 @@ IState > {
           dispatch({
             type: 'staff/del',
             payload: {
-              // sysUserId: localStorage.getItem('sysUserId'),
+              // sysUserId: sessionStorage.getItem('sysUserId'),
               staffId: id
             },
             callback

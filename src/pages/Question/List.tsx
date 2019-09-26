@@ -55,6 +55,25 @@ IState > {
       dataIndex: 'questions',
       key: 'questions'
     }, {
+      title: '题目难度',
+      dataIndex: 'difficulty',
+      key: 'difficulty',
+      render: (difficulty : any) => {
+        let str = ''
+        switch (difficulty) {
+          case 1:
+            str = '难'
+            break;
+          case 2:
+            str = '中'
+            break;
+          default:
+            str = '易'
+            break;
+        }
+        return str
+      }
+    }, {
       title: '操作',
       width: 200,
       render: (record : any) => (
@@ -110,7 +129,7 @@ IState > {
       dispatch({
         type: 'question/fetch',
         payload: {
-          sysUserId: localStorage.getItem('sysUserId'),
+          sysUserId: sessionStorage.getItem('sysUserId'),
           ...pageInfo,
           ...params
         },
@@ -196,7 +215,7 @@ IState > {
           dispatch({
             type: 'question/del',
             payload: {
-              sysUserId: localStorage.getItem('sysUserId'),
+              sysUserId: sessionStorage.getItem('sysUserId'),
               questionId: id
             },
             callback
@@ -214,7 +233,7 @@ IState > {
     }
   }
 
-  handleChange(e: any) {
+  handleChange(e : any) {
     const {files} = e.target
     if (files.length <= 0) 
       return
@@ -224,28 +243,24 @@ IState > {
     const temp = file
       .name
       .split('.')
-     
+
     const fileType = temp[temp.length - 1]
     if (!accept.includes(fileType)) {
       message.error(`请选择正确的文件格式${accept}`)
       return
     }
-    const callback = (res: any) => {
-     if(res.success){
-       message.success('导入成功')
-     }else{
-       message.error('导入失败')
-     }
+    const callback = (res : any) => {
+      if (res.success) {
+        message.success('导入成功')
+      } else {
+        message.error('导入失败')
+      }
     }
     const formFile = new FormData();
     formFile.append('file', file);
-    
+
     if (dispatch) {
-      dispatch({
-        type: 'question/importExcel',
-        payload: formFile,
-        callback
-      });
+      dispatch({type: 'question/importExcel', payload: formFile, callback});
     }
   }
 

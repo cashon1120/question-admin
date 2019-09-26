@@ -51,7 +51,7 @@ IState > {
       dispatch({
         type: 'staff/fetchCompany',
         payload: {
-          sysUserId: localStorage.getItem('sysUserId')
+          sysUserId: sessionStorage.getItem('sysUserId')
         },
         callback
       });

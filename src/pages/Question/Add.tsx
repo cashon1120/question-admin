@@ -37,6 +37,7 @@ interface IState {
   questions : string,
   questionId : string,
   lastCorrectIndex : number | null
+  difficulty: number | undefined
 }
 
 class AddQuestion extends Component < FormProps,
@@ -46,6 +47,7 @@ IState > {
     this.state = {
       spinLoading: false,
       loading: false,
+      difficulty: 1,
       answers: [
         {
           detail: '',
@@ -109,7 +111,7 @@ IState > {
     const callback = (res : any) => {
       this.changeSpinLoading(false)
       if (res.success) {
-        const {type, is_multiple_selection, topic, questions} = res.data.question
+        const {type, is_multiple_selection, topic, questions, difficulty} = res.data.question
         let answers : any[] = []
 
         res
@@ -129,7 +131,7 @@ IState > {
               del: false
             })
           })
-        this.setState({type, isMultipleSelection: is_multiple_selection, topic, questions, answers})
+        this.setState({type, isMultipleSelection: is_multiple_selection, topic, questions, difficulty, answers})
 
         if (is_multiple_selection === 3) {
           let oldAnswers = []
@@ -143,7 +145,7 @@ IState > {
       }
     }
     const payload = {
-      sysUserId: localStorage.getItem('sysUserId'),
+      sysUserId: sessionStorage.getItem('sysUserId'),
       questionId
     }
     dispatch({type: 'question/detail', payload, callback});
@@ -152,7 +154,7 @@ IState > {
   // 提交 / 修改答题
   handleSubmit = (e : React.FormEvent) => {
     const {dispatch, form} = this.props;
-    const {answers, isMultipleSelection, questionId} = this.state
+    const {answers, isMultipleSelection, questionId, difficulty} = this.state
 
     let options : any[] = []
     const callback = (res : any) => {
@@ -187,11 +189,12 @@ IState > {
         if (questionId) {
           payload = {
             questionId,
-            sysUserId: localStorage.getItem('sysUserId'),
+            sysUserId: sessionStorage.getItem('sysUserId'),
             type: values.type,
             isMultipleSelection,
             topic: values.topic,
-            questions: values.questions
+            questions: values.questions,
+            difficulty
           }
           url = 'question/update'
         } else {
@@ -201,10 +204,11 @@ IState > {
             topic: values.topic,
             questions: values.questions,
             score: 0,
-            options
+            options,
+            difficulty
           }
           payload = {
-            sysUserId: localStorage.getItem('sysUserId'),
+            sysUserId: sessionStorage.getItem('sysUserId'),
             jsonString: JSON.stringify(data)
           }
           url = 'question/add'
@@ -238,6 +242,12 @@ IState > {
   onTypeChange = (e : any) => {
     const value = e.target.value
     this.setState({type: value})
+  }
+
+  // 题目种类切换
+  onDiffcultyChange = (e : any) => {
+    const value = e.target.value
+    this.setState({difficulty: value})
   }
 
   // 单选/多选/判断题 切换
@@ -308,7 +318,7 @@ IState > {
         this.changeSpinLoading(false)
       }
       const payload = {
-        sysUserId: localStorage.getItem('sysUserId'),
+        sysUserId: sessionStorage.getItem('sysUserId'),
         optionId
       }
       dispatch({type: 'question/delOption', payload, callback});
@@ -333,7 +343,7 @@ IState > {
         this.changeSpinLoading(false)
       }
       const payload = {
-        sysUserId: localStorage.getItem('sysUserId'),
+        sysUserId: sessionStorage.getItem('sysUserId'),
         optionId,
         detail,
         isCorrect
@@ -352,7 +362,7 @@ IState > {
         this.changeSpinLoading(false)
       }
       const payload = {
-        sysUserId: localStorage.getItem('sysUserId'),
+        sysUserId: sessionStorage.getItem('sysUserId'),
         questionId,
         detail,
         isCorrect
@@ -394,6 +404,7 @@ IState > {
       type,
       isMultipleSelection,
       topic,
+      difficulty,
       questions,
       questionId,
       spinLoading
@@ -447,6 +458,27 @@ IState > {
                     <Radio value={1}>多选题</Radio>
                     <Radio value={2}>单选题</Radio>
                     <Radio value={3}>判断题</Radio>
+                  </Radio.Group>
+                )}
+              </Col>
+            </Row>
+          </FormItem>
+          <FormItem label="题目难度">
+            <Row gutter={24}>
+              <Col span={24}>
+                {getFieldDecorator('difficulty', {
+                  initialValue: difficulty,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择题目分类'
+                    }
+                  ]
+                })(
+                  <Radio.Group onChange={this.onDiffcultyChange}>
+                    <Radio value={1}>难</Radio>
+                    <Radio value={2}>中</Radio>
+                    <Radio value={3}>易</Radio>
                   </Radio.Group>
                 )}
               </Col>

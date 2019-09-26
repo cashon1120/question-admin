@@ -202,7 +202,7 @@ IState > {
       dispatch({
         type: 'userDelivery/fetch',
         payload: {
-          sysUserId: localStorage.getItem('sysUserId'),
+          sysUserId: sessionStorage.getItem('sysUserId'),
           ...searchParams,
           ...pageInfo,
           ...params
@@ -430,7 +430,6 @@ IState > {
           </div>
         </div>
         <StandardTable
-          showSelectRow={true}
           rowKey="delivery_id"
           columns={this.columns}
           data={data || []}

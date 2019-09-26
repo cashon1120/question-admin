@@ -87,14 +87,9 @@ IState > {
       key: 'phone',
     }, 
     {
-      title: '招聘会场',
+      title: '生源地',
       dataIndex: 'address',
       key: 'address',
-    },
-    {
-      title: '会场时间',
-      dataIndex: 'publish_time',
-      key: 'publish_time',
     },{
       title: '特长',
       dataIndex: 'specialty',
@@ -156,7 +151,7 @@ IState > {
       dispatch({
         type: 'userInfo/fetch',
         payload: {
-          sysUserId: localStorage.getItem('sysUserId'),
+          sysUserId: sessionStorage.getItem('sysUserId'),
           ...searchParams,
           ...pageInfo,
           ...params
@@ -178,6 +173,11 @@ IState > {
         componentType: 'Select',
         dataSource: EDUCATION_ARR
       },{
+        title: '电话',
+        dataIndex: 'phone',
+        componentType: 'Input'
+      },
+      ,{
         title: '专业分类',
         dataIndex: 'professionCategory',
         componentType: 'Select',
@@ -186,14 +186,6 @@ IState > {
         title: '毕业院校',
         dataIndex: 'graduatedSchool',
         componentType: 'Input'
-      },{
-        title: '招聘会场',
-        dataIndex: 'address',
-        componentType: 'Input'
-      },{
-        title: '时间',
-        dataIndex: 'times',
-        componentType: 'RangePicker'
       }
     ];
     return serarchColumns;

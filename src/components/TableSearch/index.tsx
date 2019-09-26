@@ -138,7 +138,7 @@ class TableSearch extends PureComponent < FormProps, {} > {
       }
       delete fieldsValue.times
       const values = {
-        sysUserId: localStorage.getItem('sysUserId'),
+        sysUserId: sessionStorage.getItem('sysUserId'),
         ...fieldsValue,
         startTime,
         endTime

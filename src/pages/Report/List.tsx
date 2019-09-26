@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Button, message, Modal} from 'antd';
+import {Card, message, Modal} from 'antd';
 import {connect} from 'dva';
 import 'antd/dist/antd.css';
 import Link from 'umi/link';
@@ -171,7 +171,7 @@ IState > {
       dispatch({
         type: 'report/fetch',
         payload: {
-          sysUserId: localStorage.getItem('sysUserId'),
+          sysUserId: sessionStorage.getItem('sysUserId'),
           ...searchParams,
           ...pageInfo,
           ...params
@@ -324,7 +324,6 @@ IState > {
             </div>
           </div>
           <StandardTable
-            showSelectRow={true}
             rowKey="id"
             columns={this.columns}
             data={data || []}

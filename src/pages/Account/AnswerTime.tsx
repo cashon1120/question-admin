@@ -50,7 +50,7 @@ IState > {
       }
     }
     const payload = {
-      sysUserId: localStorage.getItem('sysUserId')
+      sysUserId: sessionStorage.getItem('sysUserId')
     }
     dispatch({type: 'account/getAnswerTime', payload, callback});
   }
@@ -70,7 +70,7 @@ IState > {
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const payload = {
-          sysUserId: localStorage.getItem('sysUserId'),
+          sysUserId: sessionStorage.getItem('sysUserId'),
           answerTime: values.answerTime
         }
         this.setState({loading: true})

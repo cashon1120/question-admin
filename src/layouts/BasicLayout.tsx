@@ -50,7 +50,7 @@ const BasicLayout : React.FC < BasicLayoutProps > = props => {
   /**
    * constructor
    */
-  const userId = localStorage.getItem('sysUserId')
+  const userId = sessionStorage.getItem('sysUserId')
   if (userId) {
     useEffect(() => {
       if (dispatch) {

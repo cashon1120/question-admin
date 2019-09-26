@@ -14,15 +14,15 @@ class AvatarDropdown extends React.Component < GlobalHeaderRightProps > {
 
   logout = () => {
     const {dispatch} = this.props;
-    localStorage.removeItem('sysUserId')
-    localStorage.removeItem('userName')
+    sessionStorage.removeItem('sysUserId')
+    sessionStorage.removeItem('userName')
     if (dispatch) {
       dispatch({type: 'login/logout'});
     }
   };
 
   render() : React.ReactNode {
-    const userName = localStorage.getItem('userName')
+    const userName = sessionStorage.getItem('userName')
     return  (
         <div>
           <span className={`${styles.action} ${styles.account}`}>

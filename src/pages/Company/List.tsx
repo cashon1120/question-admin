@@ -144,7 +144,7 @@ IState > {
       dispatch({
         type: 'company/fetch',
         payload: {
-          sysUserId: localStorage.getItem('sysUserId'),
+          sysUserId: sessionStorage.getItem('sysUserId'),
           ...searchParams,
           ...params
         }
@@ -205,7 +205,7 @@ IState > {
           dispatch({
             type: 'company/del',
             payload: {
-              sysUserId: localStorage.getItem('sysUserId'),
+              sysUserId: sessionStorage.getItem('sysUserId'),
               selectedUserId: id
             },
             callback

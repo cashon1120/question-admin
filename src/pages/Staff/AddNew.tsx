@@ -49,7 +49,7 @@ IState > {
       dispatch({
         type: 'staff/fetchCompany',
         payload: {
-          sysUserId: localStorage.getItem('sysUserId')
+          sysUserId: sessionStorage.getItem('sysUserId')
         },
         callback
       });
@@ -81,7 +81,7 @@ IState > {
         ...fields,
       }
       : {
-        sysUserId: localStorage.getItem('sysUserId'),
+        sysUserId: sessionStorage.getItem('sysUserId'),
         ...fields,
       }
     dispatch({type, payload, callback});
@@ -109,7 +109,7 @@ IState > {
     } = this.props;
 
     const {companyData} = this.state
-    const sysUserId = localStorage.getItem('sysUserId')
+    const sysUserId = sessionStorage.getItem('sysUserId')
 
 
     let companySelect : any = {}

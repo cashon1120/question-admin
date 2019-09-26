@@ -109,30 +109,6 @@ export default {
       component: '../layouts/BasicLayout',
       routes: [
         {
-          path: '/question',
-          name: 'question',
-          icon: 'file-unknown',
-          authority: ['superAdmin'],
-          routes: [
-            {
-              path: '/question/list',
-              name: 'list',
-              component: './Question/List',
-            },
-            {
-              path: '/question/add',
-              name: 'add',
-              component: './Question/Add',
-            },
-            {
-              path: '/question/detail/:id?',
-              name: 'detail',
-              component: './Question/Add',
-              hideInMenu: true
-            },
-          ],
-        },
-        {
           path: '/',
           component: './Home/Home',
         },
@@ -218,6 +194,30 @@ export default {
         //     },
         //   ],
         // },
+        {
+          path: '/question',
+          name: 'question',
+          icon: 'file-unknown',
+          authority: ['superAdmin'],
+          routes: [
+            {
+              path: '/question/list',
+              name: 'list',
+              component: './Question/List',
+            },
+            {
+              path: '/question/add',
+              name: 'add',
+              component: './Question/Add',
+            },
+            {
+              path: '/question/detail/:id?',
+              name: 'detail',
+              component: './Question/Add',
+              hideInMenu: true
+            },
+          ],
+        },
         {
           path: '/account',
           name: 'account',

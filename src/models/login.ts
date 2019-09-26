@@ -45,7 +45,7 @@ const LoginModel: ModelType = {
       const { redirect } = getPageQuery();
       // redirect
       if (window.location.pathname !== '/user/login' && !redirect) {
-        localStorage.removeItem('sysUserId')
+        sessionStorage.removeItem('sysUserId')
         yield put(
           routerRedux.replace({
             pathname: './login',

@@ -40,11 +40,11 @@ class AddCompany extends Component<IProps, IState> {
     };
     const type = id ? 'company/update' : 'company/add'
     const payload = id ? {
-      sysUserId: localStorage.getItem('sysUserId'),
+      sysUserId: sessionStorage.getItem('sysUserId'),
       selectedUserId: id,
       ...fields,
     } : {
-      sysUserId: localStorage.getItem('sysUserId'),
+      sysUserId: sessionStorage.getItem('sysUserId'),
       ...fields,
     }
     dispatch({
