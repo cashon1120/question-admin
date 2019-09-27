@@ -18,7 +18,7 @@ export async function update(params: object): Promise<any> {
 }
 
 export async function importExcel(params: object): Promise<any> {
-  return request(API_URL + '/admin/sys/exportInExcel', {
+  return request(API_URL + '/app/inport/exportInExcel', {
     method: 'POST',
     requestType: 'form',
     data: params,

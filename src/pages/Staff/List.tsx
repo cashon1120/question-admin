@@ -214,7 +214,7 @@ IState > {
         <div className="table-operate">
           <a onClick={() => this.handleEdit(record)}>修改</a>
           {
-            record.sys_user_id !== 1 ? <a onClick={() => this.handleDel(record.staffId)}>删除</a> : null
+            (record.id === 17 || record.id === 21) ?  null: <a onClick={() => this.handleDel(record.staffId)}>删除</a>
           }
         </div>
       )

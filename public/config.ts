@@ -24,8 +24,8 @@ export const submitFormLayout = {
   }
 };
 
-// export const API_URL = 'https://juneee.cn'
-export const API_URL = '/api'
+//export const API_URL = 'https://juneee.cn'
+ export const API_URL = '/api'
 
 export const EDUCATION_ARR = ['博士研究生', '硕士研究生', '大学本科', '大学专科']
 export const MAJOR_ARR = [

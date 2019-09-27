@@ -7,6 +7,7 @@ import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
 import moment from 'moment';
+import { API_URL } from '../../../public/config'
 const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
@@ -15,7 +16,7 @@ interface IProps extends ConnectProps {
 }
 
 interface IState {
-  loading : boolean;
+  uploadLoading : boolean;
   modalVisible : boolean;
   selectedRowKeys : any[];
   searchData : {
@@ -30,7 +31,7 @@ interface IState {
 class QuestionList extends Component < IProps,
 IState > {
   state = {
-    loading: false,
+    uploadLoading: false,
     modalVisible: false,
     selectedRowKeys: [],
     searchData: {
@@ -102,10 +103,6 @@ IState > {
 
   // 加载数据
   initData(params?: any) {
-    this.setState({loading: true})
-    const callback = () => {
-      this.setState({loading: false})
-    }
     const {dispatch} = this.props;
     const {pageInfo, searchData} = this.state;
     const searchParams = {}
@@ -132,8 +129,7 @@ IState > {
           sysUserId: sessionStorage.getItem('sysUserId'),
           ...pageInfo,
           ...params
-        },
-        callback
+        }
       });
     }
   }
@@ -234,11 +230,11 @@ IState > {
   }
 
   handleChange(e : any) {
+    
     const {files} = e.target
     if (files.length <= 0) 
       return
     let accept = '.xls, .xlsx, .xlsm'
-    const {dispatch} = this.props
     const file = files[0]
     const temp = file
       .name
@@ -249,23 +245,39 @@ IState > {
       message.error(`请选择正确的文件格式${accept}`)
       return
     }
-    const callback = (res : any) => {
-      if (res.success) {
+    this.setState({
+      uploadLoading: true
+    })
+    const that = this
+    const callback = (evt : any) => {
+      this.setState({
+        uploadLoading: false
+      })
+      var res = JSON.parse(evt.target.responseText);
+      if (res.flag === '1') {
         message.success('导入成功')
+        this.initData()
       } else {
-        message.error('导入失败')
+        message.error(res.flag)
       }
     }
-    const formFile = new FormData();
-    formFile.append('file', file);
-
-    if (dispatch) {
-      dispatch({type: 'question/importExcel', payload: formFile, callback});
+    const formFile = new FormData()
+    let xhr = null
+    formFile.append("file", file)
+    xhr = new XMLHttpRequest()
+    xhr.onload = callback
+    xhr.onerror =  function(){
+      that.setState({
+        uploadLoading: false
+      })
     }
+    xhr.open("post", API_URL + '/app/inport/exportInExcel', true);
+    xhr.send(formFile)
   }
 
   render() {
     const {data, loading} = this.props;
+    const {uploadLoading} = this.state
     return (
       <Card>
         <div className="flex-container">
@@ -285,7 +297,7 @@ IState > {
                 display: 'none'
               }}
                 type="file"/>
-              <Button type="primary">导入题库</Button>
+              <Button loading={uploadLoading} type="primary">导入题库</Button>
             </a>
           </div>
         </div>
