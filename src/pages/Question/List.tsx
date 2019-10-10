@@ -6,8 +6,7 @@ import Link from 'umi/link';
 import StandardTable from '@/components/StandardTable';
 import TableSearch from '../../components/TableSearch';
 import {ConnectProps, ConnectState} from '@/models/connect';
-import moment from 'moment';
-import { API_URL } from '../../../public/config'
+import {API_URL} from '../../../public/config'
 const {confirm} = Modal;
 
 interface IProps extends ConnectProps {
@@ -75,6 +74,25 @@ IState > {
         return str
       }
     }, {
+      title: '题型',
+      dataIndex: 'is_multiple_selection',
+      key: 'is_multiple_selection',
+      render: (is_multiple_selection : any) => {
+        let str = ''
+        switch (is_multiple_selection) {
+          case 1:
+            str = '多选题'
+            break;
+          case 2:
+            str = '单选题'
+            break;
+          default:
+            str = '判断题'
+            break;
+        }
+        return str
+      }
+    }, {
       title: '操作',
       width: 200,
       render: (record : any) => (
@@ -128,7 +146,7 @@ IState > {
         payload: {
           sysUserId: sessionStorage.getItem('sysUserId'),
           ...pageInfo,
-          ...params
+          ...searchParams
         }
       });
     }
@@ -139,13 +157,40 @@ IState > {
     const serarchColumns = [
       {
         title: '题目',
-        dataIndex: 'title',
+        dataIndex: 'topic',
         componentType: 'Input'
       }, {
-        title: '创建日期',
-        dataIndex: 'times',
-        componentType: 'RangePicker',
-        col: 8
+        title: '题目',
+        dataIndex: 'type',
+        componentType: 'Select',
+        dataSource: [
+          {
+            id: 1,
+            value: '行测题'
+          }, {
+            id: 2,
+            value: '职业道德题'
+          }, {
+            id: 3,
+            value: '电力安全常识题'
+          }
+        ]
+      }, {
+        title: '题目',
+        dataIndex: 'isMultipleSelection',
+        componentType: 'Select',
+        dataSource: [
+          {
+            id: 1,
+            value: '多选'
+          }, {
+            id: 2,
+            value: '单选'
+          }, {
+            id: 3,
+            value: '判断'
+          }
+        ]
       }
     ];
     return serarchColumns;
@@ -154,19 +199,10 @@ IState > {
   // 搜索
   handleSearch = (values : any) => {
     const {searchData} = this.state
-    let startTime = ''
-    let endTime = ''
-    if (values.times) {
-      startTime = moment(values.times[0]).format('YYYY-MM-DD HH:mm:ss')
-      endTime = moment(values.times[1]).format('YYYY-MM-DD HH:mm:ss')
-    }
     this.setState({
       searchData: {
         ...searchData,
-        name: values.name,
-        status: values.status,
-        startTime,
-        endTime
+        ...values
       }
     }, () => {
       this.initData()
@@ -230,7 +266,7 @@ IState > {
   }
 
   handleChange(e : any) {
-    
+
     const {files} = e.target
     if (files.length <= 0) 
       return
@@ -245,14 +281,10 @@ IState > {
       message.error(`请选择正确的文件格式${accept}`)
       return
     }
-    this.setState({
-      uploadLoading: true
-    })
+    this.setState({uploadLoading: true})
     const that = this
     const callback = (evt : any) => {
-      this.setState({
-        uploadLoading: false
-      })
+      this.setState({uploadLoading: false})
       var res = JSON.parse(evt.target.responseText);
       if (res.flag === '1') {
         message.success('导入成功')
@@ -266,10 +298,8 @@ IState > {
     formFile.append("file", file)
     xhr = new XMLHttpRequest()
     xhr.onload = callback
-    xhr.onerror =  function(){
-      that.setState({
-        uploadLoading: false
-      })
+    xhr.onerror = function () {
+      that.setState({uploadLoading: false})
     }
     xhr.open("post", API_URL + '/app/inport/exportInExcel', true);
     xhr.send(formFile)

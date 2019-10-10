@@ -31,3 +31,11 @@ export async function detail(params: object): Promise<{}> {
     data: params,
   });
 }
+
+export async function del(params: object): Promise<{}> {
+  return request(API_URL + '/admin/sys/delCandidateById', {
+    method: 'POST',
+    requestType: 'form',
+    data: params,
+  });
+}

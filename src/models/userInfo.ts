@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 import {  Effect } from 'dva';
-import { fetch, exportFile, checkOut, detail } from '@/services/userInfo';
+import { fetch, exportFile, checkOut, detail, del } from '@/services/userInfo';
 
 export interface UserInfoModelState {
   data: any;
@@ -13,7 +13,8 @@ export interface ModelType {
     fetch: Effect;
     exportFile: Effect;
     checkOut:Effect;
-    detail: Effect
+    detail: Effect;
+    del: Effect;
   };
   reducers: {
     saveData: Reducer<{}>;
@@ -53,6 +54,13 @@ const LoginModel: ModelType = {
 
     *detail({ payload, callback }, { call }) {
       const response = yield call(detail, payload);
+      if (callback) {
+        callback(response);
+      }
+    },
+
+    *del({ payload, callback }, { call }) {
+      const response = yield call(del, payload);
       if (callback) {
         callback(response);
       }

@@ -101,15 +101,15 @@ IState > {
       dataIndex: 'address',
       key: 'address'
     }, {
+      title: '地市公司',
+      dataIndex: 'company_name',
+      key: 'company_name'
+    }, {
       title: '会场时间',
       dataIndex: 'publish_time',
       key: 'publish_time'
     }, 
     {
-      title: '投递公司',
-      dataIndex: 'company_name',
-      key: 'company_name',
-    },{
       title: '审核状态',
       width: 100,
       key: 'is_delivery',
@@ -151,7 +151,7 @@ IState > {
               <a onClick={() => this.hadleCheckOut(record.delivery_id, 2)}>不通过</a>
             </div>
         }
-        if (record.is_delivery === 10) {
+        if (record.is_delivery > 2) {
           compnent = 
             <div className="table-operate">
               <a onClick={() => this.hadleReCheckOut(record.delivery_id)}>复审</a>

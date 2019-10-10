@@ -4,6 +4,7 @@ import {Modal} from 'antd';
 interface IProps {
   imgUrl : string
   visible : boolean
+  imgType: number
   onCancel : () => void
 }
 
@@ -58,11 +59,11 @@ class ImageDetail extends Component < IProps, {} > {
     }
   };
   render() {
-    const {imgUrl, visible} = this.props;
+    const {imgUrl, visible, imgType} = this.props;
 
     return (
       <Modal
-        title="二维码"
+        title={imgType === 2 ? "考试二维码" : "招聘二维码"}
         visible={visible}
         onOk={this.downloadImg}
         onCancel={() => this.handleTriggerModal()}

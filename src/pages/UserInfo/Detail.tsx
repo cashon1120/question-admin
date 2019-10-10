@@ -39,27 +39,6 @@ IState > {
     this.initData();
   }
 
-  checkOut = () => {
-    const {dispatch} = this.props
-    const {id} = this.state
-    const callback = (response : any) => {
-      if (response.success) {
-        message.success('操作成功')
-      }
-    }
-    confirm({
-      title: '审核信息',
-      content: '审核通过后，考生即可扫描二维码考试，是否通过审核？',
-      onOk: () => {
-        if (dispatch) {
-          dispatch({type: 'userInfo/checkOut', payload: {
-              id
-            }, callback});
-        }
-      }
-    });
-  }
-
   // 加载数据
   initData(params?: any) {
     const {dispatch} = this.props;
@@ -81,6 +60,36 @@ IState > {
         callback
       });
     }
+  }
+
+  deleteUser = () => {
+    const {id} = this.state
+    const {dispatch} = this.props
+    const callback = (res : any) => {
+      if (res.success) {
+        message.success('操作成功')
+        history.back()
+      } else {
+        message.error(res.data)
+      }
+    }
+    confirm({
+      title: '系统提示',
+      content: '确定要删除该考生吗?',
+      onOk: () => {
+        if (dispatch) {
+          dispatch({
+            type: 'userInfo/del',
+            payload: {
+              sysUserId: sessionStorage.getItem('sysUserId'),
+              candidateId: id,
+              staffId: -1
+            },
+            callback
+          });
+        }
+      }
+    });
   }
 
   render() {
@@ -117,6 +126,7 @@ IState > {
         </Descriptions>
         <div className="foot-btn">
           <Button onClick={() => history.back()}>返回</Button>
+          <Button type="primary" onClick={() => this.deleteUser()}>删除</Button>
         </div>
         <div className={spinLoading
           ? 'spin'

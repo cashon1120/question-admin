@@ -98,6 +98,10 @@ IState > {
       key: 'ksTime',
       render: (record : any) => <span>{record.start_time}至<br/>{record.end_time}</span>
     }, {
+      title: '地市公司',
+      dataIndex: 'company_name',
+      key: 'company_name'
+    },{
       title: '得分',
       dataIndex: 'score',
       key: 'score'

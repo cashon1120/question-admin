@@ -27,6 +27,7 @@ interface IState {
   imgUrl : string;
   peopleData : any[],
   modalData : any,
+  imgType: number,
   selectedRowKeys : any[];
   searchData : {
     [key : string]: any
@@ -48,6 +49,7 @@ IState > {
     imgDetailVisible: false,
     showPeopleVisible: false,
     imgUrl: '',
+    imgType: 0,
     selectedRowKeys: [],
     peopleData: [],
     searchData: {
@@ -143,7 +145,7 @@ IState > {
           }}
             src={record.img_url}
             onClick={() => {
-            this.handleShowImgDetail(record.img_url)
+            this.handleShowImgDetail(1, record.img_url)
           }}
             alt=""/>
         }
@@ -169,7 +171,7 @@ IState > {
           }}
             src={record.ks_img_url}
             onClick={() => {
-            this.handleShowImgDetail(record.ks_img_url)
+            this.handleShowImgDetail(2,record.ks_img_url)
           }}
             alt=""/>
         }
@@ -188,7 +190,6 @@ IState > {
         <div className="table-operate">
           <a onClick={() => this.handleSetCode(record, 1)}>生成招聘二维码</a><br/>
           <a onClick={() => this.handleSetCode(record, 2)}>生成考试二维码</a><br/>
-          <a onClick={() => this.handleDel(record.staffId)}>删除</a>
         </div>
       )
     }
@@ -214,7 +215,7 @@ IState > {
         <div className="table-operate">
           <a onClick={() => this.handleEdit(record)}>修改</a>
           {
-            (record.id === 17 || record.id === 21) ?  null: <a onClick={() => this.handleDel(record.staffId)}>删除</a>
+            (record.sys_user_id ===1 || record.id === 1) ?  null: <a onClick={() => this.handleDel(record.staffId)}>删除</a>
           }
         </div>
       )
@@ -292,16 +293,15 @@ IState > {
     })
   }
   // 显示二维码大图
-  handleShowImgDetail = (imgUrl?: string) => {
+  handleShowImgDetail = (imgType?: number, imgUrl?: string) => {
     const {imgDetailVisible} = this.state
     if (imgDetailVisible) {
       this.setState({imgDetailVisible: false})
     } else {
-      if (imgUrl) {
-        this.setState({imgUrl, imgDetailVisible: true})
+      if (imgUrl && imgType) {
+        this.setState({imgUrl, imgDetailVisible: true, imgType})
       }
     }
-
   }
 
   // 加载数据
@@ -463,7 +463,8 @@ IState > {
       imgUrl,
       imgDetailVisible,
       showPeopleVisible,
-      peopleData
+      peopleData,
+      imgType
     } = this.state
     const tableColumns = getAuthority()[0] === 'superAdmin'
       ? this.columns_admin
@@ -504,6 +505,7 @@ IState > {
           onOk={() => this.handleSubmitModal(1)}/>
 
         <ImageDetail
+        imgType={imgType}
           imgUrl={imgUrl}
           visible={imgDetailVisible}
           onCancel={this.handleShowImgDetail}/>
